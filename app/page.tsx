@@ -1,7 +1,27 @@
 "use client";
 
 import { useEffect, useState, useCallback } from 'react';
-import { Activity, CreditCard, Users, TrendingUp, RefreshCw, Wifi, WifiOff, Clock, ArrowUpRight } from 'lucide-react';
+import { 
+  Activity, 
+  CreditCard, 
+  Users, 
+  TrendingUp, 
+  RefreshCw, 
+  Wifi, 
+  WifiOff, 
+  Clock, 
+  ArrowUpRight,
+  FileText,
+  AlertTriangle,
+  CheckCircle2,
+  XCircle,
+  FileSpreadsheet,
+  AlertCircle,
+  Calendar,
+  ChevronRight,
+  UserCheck
+} from 'lucide-react';
+import Link from 'next/link';
 
 interface PersonelSatis {
   adSoyad: string;
@@ -20,10 +40,36 @@ interface RaporData {
 }
 
 export default function Home() {
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [userLoading, setUserLoading] = useState(true);
+
+  // Management overview state
   const [data, setData] = useState<RaporData | null>(null);
   const [loading, setLoading] = useState(true);
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
 
+  // Personnel overview state
+  const [personalLoading, setPersonalLoading] = useState(false);
+  const [personalDilekceler, setPersonalDilekceler] = useState<any[]>([]);
+  const [personalTutanaklar, setPersonalTutanaklar] = useState<any[]>([]);
+  const [personalPdks, setPersonalPdks] = useState<any[]>([]);
+
+  // Fetch current user
+  useEffect(() => {
+    fetch('/api/auth/me')
+      .then(res => res.json())
+      .then(json => {
+        if (json.kullanici) {
+          setCurrentUser(json.kullanici);
+        }
+      })
+      .catch(() => {})
+      .finally(() => {
+        setUserLoading(false);
+      });
+  }, []);
+
+  // Fetch general management data
   const fetchData = useCallback(async () => {
     try {
       const res = await fetch('/api/elektraweb');
@@ -39,12 +85,233 @@ export default function Home() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchData();
-    const interval = setInterval(fetchData, 5 * 60 * 1000);
-    return () => clearInterval(interval);
-  }, [fetchData]);
+  // Fetch personal stats for PERSONEL role
+  const fetchPersonalData = useCallback(async () => {
+    if (!currentUser || currentUser.rol !== 'PERSONEL') return;
+    setPersonalLoading(true);
+    try {
+      // Get current date formatted YYYY-MM
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const tarihStr = `${year}-${month}`;
 
+      const [dilekceRes, tutanakRes, pdksRes] = await Promise.all([
+        fetch('/api/dilekceler?kisisel=true'),
+        fetch('/api/tutanaklar?kisisel=true'),
+        fetch(`/api/pdks?tarih=${tarihStr}`)
+      ]);
+
+      if (dilekceRes.ok) {
+        const dilekceler = await dilekceRes.json();
+        setPersonalDilekceler(dilekceler);
+      }
+      if (tutanakRes.ok) {
+        const tutanaklar = await tutanakRes.json();
+        setPersonalTutanaklar(tutanaklar);
+      }
+      if (pdksRes.ok) {
+        const pdksData = await pdksRes.json();
+        setPersonalPdks(pdksData.kayitlar || []);
+      }
+    } catch (error) {
+      console.error('Kişisel veriler çekilemedi:', error);
+    } finally {
+      setPersonalLoading(false);
+    }
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (currentUser) {
+      if (currentUser.rol === 'PERSONEL') {
+        fetchPersonalData();
+      } else {
+        fetchData();
+        const interval = setInterval(fetchData, 5 * 60 * 1000);
+        return () => clearInterval(interval);
+      }
+    }
+  }, [currentUser, fetchData, fetchPersonalData]);
+
+  if (userLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="flex flex-col items-center gap-4">
+          <RefreshCw className="w-8 h-8 text-blue-500 animate-spin" />
+          <p className="text-slate-400 text-sm">Yükleniyor...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // ----------------------------------------------------
+  // PERSONEL HOME PAGE RENDERING
+  // ----------------------------------------------------
+  if (currentUser?.rol === 'PERSONEL') {
+    // Dilekçe Stats
+    const totalDilekce = personalDilekceler.length;
+    const pendingDilekce = personalDilekceler.filter(d => d.onayDurumu === 'BEKLIYOR').length;
+    const approvedDilekce = personalDilekceler.filter(d => d.onayDurumu === 'ONAYLANDI').length;
+
+    // Tutanak Stats
+    const totalTutanak = personalTutanaklar.length;
+    // Incidents against me where defence is still needed (durum === 'YENI' and user is target)
+    const defenseRequiredTutanak = personalTutanaklar.filter(t => t.durum === 'YENI' && t.ilgiliId !== 'hidden');
+
+    // PDKS Stats
+    const totalPdks = personalPdks.length;
+    const violationsPdks = personalPdks.filter(p => p.kuralDisi).length;
+
+    return (
+      <div className="space-y-6">
+        {/* Hoş Geldiniz Banner */}
+        <div className="glass-panel p-6 md:p-8 bg-gradient-to-r from-slate-800/80 to-blue-900/20 border-l-4 border-l-blue-500">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold text-white">Merhaba, {currentUser.adSoyad}!</h1>
+              <p className="text-slate-300 mt-1">Club Areena Personel Bilgi Paneline Hoş Geldiniz.</p>
+              <div className="flex items-center gap-2 mt-3 text-xs text-slate-400 bg-slate-900/60 w-fit px-3 py-1.5 rounded-full border border-slate-700/50">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Oturum Tipi: Genel Personel</span>
+              </div>
+            </div>
+            <button
+              onClick={fetchPersonalData}
+              disabled={personalLoading}
+              className="flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800 px-4 py-2 rounded-lg text-sm transition-colors border border-slate-700 disabled:opacity-50 self-start md:self-center"
+            >
+              <RefreshCw className={`w-4 h-4 ${personalLoading ? 'animate-spin' : ''}`} />
+              {personalLoading ? 'Yükleniyor...' : 'Verileri Yenile'}
+            </button>
+          </div>
+        </div>
+
+        {/* 3 Ana Modül Kartı */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* PDKS Kartı */}
+          <div className="glass-panel p-6 flex flex-col justify-between group hover:bg-slate-800/80 transition-all duration-300">
+            <div>
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-white">PDKS & Giriş-Çıkış</h3>
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-indigo-500/10 text-indigo-400">
+                  <Clock className="w-5 h-5" />
+                </div>
+              </div>
+              <p className="text-xs text-slate-400 mt-1">Bu ayki çalışma ve vardiya durumunuz</p>
+
+              <div className="mt-6 space-y-3">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-slate-400">Toplam Giriş</span>
+                  <span className="font-semibold text-white">{totalPdks} Gün</span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-slate-400">Kural Dışı Durum</span>
+                  <span className={`font-semibold ${violationsPdks > 0 ? 'text-amber-400' : 'text-slate-300'}`}>
+                    {violationsPdks} Adet
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="mt-6 pt-4 border-t border-slate-700/50">
+              <Link href="/pdks" className="flex items-center justify-between text-sm text-indigo-400 hover:text-indigo-300 font-medium">
+                <span>PDKS Kayıtlarını Gör</span>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Dilekçeler Kartı */}
+          <div className="glass-panel p-6 flex flex-col justify-between group hover:bg-slate-800/80 transition-all duration-300">
+            <div>
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-white">İzin & Dilekçeler</h3>
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-emerald-500/10 text-emerald-400">
+                  <FileText className="w-5 h-5" />
+                </div>
+              </div>
+              <p className="text-xs text-slate-400 mt-1">İzin talepleri, beyanlar ve belgeler</p>
+
+              <div className="mt-6 space-y-3">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-slate-400">Toplam Talep</span>
+                  <span className="font-semibold text-white">{totalDilekce}</span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-slate-400">Onaylanan</span>
+                  <span className="font-semibold text-emerald-400">{approvedDilekce}</span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-slate-400">Bekleyen</span>
+                  <span className="font-semibold text-amber-400">{pendingDilekce}</span>
+                </div>
+              </div>
+            </div>
+            <div className="mt-6 pt-4 border-t border-slate-700/50">
+              <Link href="/dilekceler" className="flex items-center justify-between text-sm text-emerald-400 hover:text-emerald-300 font-medium">
+                <span>Talep Oluştur & İncele</span>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Tutanaklar Kartı */}
+          <div className="glass-panel p-6 flex flex-col justify-between group hover:bg-slate-800/80 transition-all duration-300">
+            <div>
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-white">Tutanaklar</h3>
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-red-500/10 text-red-400">
+                  <AlertCircle className="w-5 h-5" />
+                </div>
+              </div>
+              <p className="text-xs text-slate-400 mt-1">Hakkınızda açılan disiplin dosyaları</p>
+
+              <div className="mt-6 space-y-3">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-slate-400">Toplam Dosya</span>
+                  <span className="font-semibold text-white">{totalTutanak}</span>
+                </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-slate-400">Savunma Bekleyen</span>
+                  <span className={`font-bold px-2 py-0.5 rounded text-xs ${defenseRequiredTutanak.length > 0 ? 'bg-red-500/20 text-red-400 animate-pulse' : 'bg-slate-800 text-slate-400'}`}>
+                    {defenseRequiredTutanak.length} Acil
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div className="mt-6 pt-4 border-t border-slate-700/50">
+              <Link href="/dilekceler" className="flex items-center justify-between text-sm text-red-400 hover:text-red-300 font-medium">
+                <span>Savunma Yaz & Tutanakları Gör</span>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Önemli Uyarılar / Savunma Bekleyenler Listesi */}
+        {defenseRequiredTutanak.length > 0 && (
+          <div className="glass-panel p-5 border border-red-500/30 bg-red-500/5">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="w-6 h-6 text-red-400 shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <h4 className="font-bold text-white">Savunma Vermeniz Gereken Tutanaklar Bulunuyor!</h4>
+                <p className="text-sm text-slate-300">Hakkınızda tutulmuş {defenseRequiredTutanak.length} adet tutanak için savunmanız beklenmektedir. Lütfen en kısa sürede savunmanızı sisteme giriniz.</p>
+                <div className="pt-2">
+                  <Link href="/dilekceler" className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white font-semibold text-xs px-4 py-2 rounded-lg transition-colors">
+                    <FileText className="w-3.5 h-3.5" />
+                    <span>Hemen Savunma Yaz</span>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ----------------------------------------------------
+  // ORIGINAL MANAGEMENT SUMMARY RENDERING (For Admin, Yonetici, Vezne)
+  // ----------------------------------------------------
   const toplamSatis = data?.toplamSatis || 0;
   const personeller = data?.personelListesi || [];
   const aktifGarson = personeller.filter(p => p.satis > 0).length;
@@ -271,10 +538,10 @@ export default function Home() {
                 { name: 'Vezne / Kasa', href: '/vezne', icon: CreditCard, color: 'text-emerald-400' },
                 { name: 'Personel & Kasa', href: '/personel-kasa', icon: Users, color: 'text-purple-400' },
               ].map((item, i) => (
-                <a key={i} href={item.href} className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 transition-colors group">
+                <Link key={i} href={item.href} className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 transition-colors group">
                   <item.icon className={`w-4 h-4 ${item.color}`} />
                   <span className="text-sm text-slate-300 group-hover:text-white transition-colors">{item.name}</span>
-                </a>
+                </Link>
               ))}
             </div>
           </div>
@@ -283,3 +550,4 @@ export default function Home() {
     </div>
   );
 }
+
