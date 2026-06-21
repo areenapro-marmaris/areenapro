@@ -2,23 +2,21 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { verifyToken } from '@/lib/auth';
 
-// Helper to authenticate request
 async function getAuthUser(req: NextRequest) {
   const token = req.cookies.get('areena_token')?.value;
   if (!token) return null;
   const payload = await verifyToken(token);
   if (!payload) return null;
   
-  const lookupId = payload.id === 'admin-id' ? undefined : payload.id;
-  const userRecord = await prisma.personel.findFirst({
-    where: {
-      OR: [
-        { id: lookupId },
-        { kullaniciAdi: 'admin' }
-      ]
-    }
+  if (payload.id === 'admin-id' || payload.kullaniciAdi === 'admin') {
+    return await prisma.personel.findFirst({
+      where: { kullaniciAdi: 'admin' }
+    });
+  }
+  
+  return await prisma.personel.findUnique({
+    where: { id: payload.id }
   });
-  return userRecord;
 }
 
 export async function GET(req: NextRequest) {

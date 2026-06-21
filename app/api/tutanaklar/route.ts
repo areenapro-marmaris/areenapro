@@ -9,16 +9,15 @@ async function getAuthUser(req: NextRequest) {
   const payload = await verifyToken(token);
   if (!payload) return null;
   
-  const lookupId = payload.id === 'admin-id' ? undefined : payload.id;
-  const userRecord = await prisma.personel.findFirst({
-    where: {
-      OR: [
-        { id: lookupId },
-        { kullaniciAdi: 'admin' }
-      ]
-    }
+  if (payload.id === 'admin-id' || payload.kullaniciAdi === 'admin') {
+    return await prisma.personel.findFirst({
+      where: { kullaniciAdi: 'admin' }
+    });
+  }
+  
+  return await prisma.personel.findUnique({
+    where: { id: payload.id }
   });
-  return userRecord;
 }
 
 export async function GET(req: NextRequest) {
