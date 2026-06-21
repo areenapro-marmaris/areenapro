@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { elektraWebSatisRaporuCek } from '@/lib/elektraweb-scraper';
 import { prisma } from '@/lib/db';
 
 // Cache: aynı veriyi tekrar tekrar çekmemek için bellekte tutuyoruz
@@ -89,6 +88,8 @@ export async function GET(req: NextRequest) {
 
   // ELEKTRAWEB_URL tanımlıysa (Yerel Sunucu modu) - ElektraWeb'den canlı çek ve Veritabanına kaydet
   try {
+    // Playwright/Scraper modülünü yereldeysek dinamik import ediyoruz
+    const { elektraWebSatisRaporuCek } = await import('@/lib/elektraweb-scraper');
     const data = await elektraWebSatisRaporuCek(tarih);
     
     // Veritabanına kaydet (Neon cloud veritabanına yazar, böylece Vercel de bu veriyi görür)
