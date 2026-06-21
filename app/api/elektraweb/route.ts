@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { elektraWebSatisRaporuCek } from '@/lib/elektraweb-scraper';
+import { prisma } from '@/lib/db';
 
 // Cache: aynı veriyi tekrar tekrar çekmemek için bellekte tutuyoruz
 let cachedData: any = null;
@@ -21,8 +22,42 @@ export async function GET(req: NextRequest) {
     });
   }
 
-  // ElektraWeb bağlantı bilgileri .env'de yoksa mock veri dön
+  // ElektraWeb bağlantı bilgileri .env'de yoksa (Bulut sunucusu / Vercel modu)
   if (!process.env.ELEKTRAWEB_URL) {
+    try {
+      const targetTarih = tarih || new Date().toISOString().split('T')[0];
+      
+      // Veritabanından o tarihe ait kaydedilmiş satış verisini bulmaya çalışalım
+      let dbRecord = await prisma.elektraSatis.findUnique({
+        where: { tarih: targetTarih }
+      });
+
+      // Eğer o güne ait kayıt henüz yoksa en son kaydedilmiş raporu getirelim
+      if (!dbRecord) {
+        dbRecord = await prisma.elektraSatis.findFirst({
+          orderBy: { tarih: 'desc' }
+        });
+      }
+
+      if (dbRecord) {
+        const payload = {
+          tarih: dbRecord.tarih,
+          toplamSatis: dbRecord.toplamSatis,
+          personelListesi: dbRecord.personelListesi as any,
+          sonGuncelleme: dbRecord.sonGuncelleme.toLocaleTimeString('tr-TR'),
+          source: 'cache' as const,
+          cacheAge: 'Yerel Sunucudan Alındı'
+        };
+        // Sunucu belleğine cache'le
+        cachedData = payload;
+        cacheTime = Date.now();
+        return NextResponse.json(payload);
+      }
+    } catch (dbError) {
+      console.error('Veritabanından Elektra verisi okunurken hata:', dbError);
+    }
+
+    // Hiçbir kayıt bulunamazsa mock veri dönelim
     return NextResponse.json({
       tarih: tarih || new Date().toISOString().split('T')[0],
       toplamSatis: 54550,
@@ -39,9 +74,30 @@ export async function GET(req: NextRequest) {
     });
   }
 
+  // ELEKTRAWEB_URL tanımlıysa (Yerel Sunucu modu) - ElektraWeb'den canlı çek ve Veritabanına kaydet
   try {
     const data = await elektraWebSatisRaporuCek(tarih);
     
+    // Veritabanına kaydet (Neon cloud veritabanına yazar, böylece Vercel de bu veriyi görür)
+    try {
+      await prisma.elektraSatis.upsert({
+        where: { tarih: data.tarih },
+        update: {
+          toplamSatis: data.toplamSatis,
+          personelListesi: data.personelListesi as any,
+          sonGuncelleme: new Date()
+        },
+        create: {
+          tarih: data.tarih,
+          toplamSatis: data.toplamSatis,
+          personelListesi: data.personelListesi as any,
+          sonGuncelleme: new Date()
+        }
+      });
+    } catch (saveError) {
+      console.error('Scraped ElektraWeb verileri veritabanına kaydedilemedi:', saveError);
+    }
+
     // Cache'e kaydet
     cachedData = data;
     cacheTime = Date.now();

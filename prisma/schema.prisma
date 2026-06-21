@@ -193,3 +193,12 @@ model Bildirim {
 
   personel   Personel @relation(fields: [personelId], references: [id], onDelete: Cascade)
 }
+
+model ElektraSatis {
+  id             String   @id @default(uuid())
+  tarih          String   @unique // "YYYY-MM-DD"
+  toplamSatis    Float
+  personelListesi Json     // JSON array of PersonelSatis
+  sonGuncelleme  DateTime @default(now())
+}
+
