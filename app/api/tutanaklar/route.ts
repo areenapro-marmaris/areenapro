@@ -137,7 +137,7 @@ export async function POST(req: NextRequest) {
         baslik: 'Hakkınızda Tutanak Düzenlendi',
         mesaj: `Konu: ${konu}`
       }
-    }).catch(err => console.error("Bildirim oluşturulamadı:", err));
+    }).catch((err: any) => console.error("Bildirim oluşturulamadı:", err));
 
     return NextResponse.json(yeniTutanak, { status: 201 });
   } catch (error) {
@@ -219,7 +219,7 @@ export async function PUT(req: NextRequest) {
             baslik: 'Tutanak Karara Bağlandı',
             mesaj: `Hakkınızdaki tutanak karara bağlandı: ${kararTuru === 'UYARI' ? 'Uyarı' : kararTuru === 'PARA_CEZASI' ? 'Para Cezası' : 'Uzaklaştırma'}. Not: ${kararNotu || ''}`
           }
-        }).catch(err => console.error("Bildirim oluşturulamadı:", err));
+        }).catch((err: any) => console.error("Bildirim oluşturulamadı:", err));
       }
 
       const guncel = await prisma.tutanak.update({

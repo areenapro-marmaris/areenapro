@@ -147,7 +147,7 @@ export async function PUT(req: NextRequest) {
         baslik: `Dilekçeniz ${onayDurumu === 'ONAYLANDI' ? 'Onaylandı' : 'Reddedildi'}`,
         mesaj: `Konu: ${guncelDilekce.konu}`
       }
-    }).catch(err => console.error("Bildirim oluşturulamadı:", err));
+    }).catch((err: any) => console.error("Bildirim oluşturulamadı:", err));
 
     return NextResponse.json(guncelDilekce);
   } catch (error) {
