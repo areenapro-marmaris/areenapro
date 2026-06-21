@@ -48,10 +48,10 @@ export async function elektraWebSatisRaporuCek(tarih?: string): Promise<ElektraW
     // 2. Giriş Formunu Doldur
     // NOT: Selector'lar ElektraWeb'in gerçek giriş sayfasına göre ayarlanmalıdır.
     // Bunları öğrenmek için tarayıcıda F12'ye basıp input alanlarına sağ tıklayıp "İncele" yapın.
-    await page.fill('[name="tenant"], [name="domain"], #tenant', ELEKTRAWEB_TENANT);
-    await page.fill('[name="username"], [name="usercode"], #username', ELEKTRAWEB_USER);
-    await page.fill('[name="password"], #password', ELEKTRAWEB_PASS);
-    await page.click('[type="submit"], button:has-text("Giriş"), button:has-text("Login")');
+    await page.fill('[name="tenantNo"], [name="tenant"], [name="domain"], #tenant', ELEKTRAWEB_TENANT);
+    await page.fill('[name="userCode"], [name="username"], [name="usercode"], #username', ELEKTRAWEB_USER);
+    await page.fill('[name="hotelPassword"], [name="password"], #password', ELEKTRAWEB_PASS);
+    await page.click('[type="submit"], button.login-btn, button:has-text("Giriş"), button:has-text("Login")');
 
     // 3. Giriş sonrası ana sayfanın yüklenmesini bekle
     await page.waitForLoadState('networkidle', { timeout: 15000 });

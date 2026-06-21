@@ -31,10 +31,10 @@ async function scrapeElektraWeb() {
     await page.goto(ELEKTRAWEB_URL, { waitUntil: 'networkidle', timeout: 30000 });
 
     console.log('Giriş bilgileri dolduruluyor...');
-    await page.fill('[name="tenant"], [name="domain"], #tenant', ELEKTRAWEB_TENANT);
-    await page.fill('[name="username"], [name="usercode"], #username', ELEKTRAWEB_USER);
-    await page.fill('[name="password"], #password', ELEKTRAWEB_PASS);
-    await page.click('[type="submit"], button:has-text("Giriş"), button:has-text("Login")');
+    await page.fill('[name="tenantNo"], [name="tenant"], [name="domain"], #tenant', ELEKTRAWEB_TENANT);
+    await page.fill('[name="userCode"], [name="username"], [name="usercode"], #username', ELEKTRAWEB_USER);
+    await page.fill('[name="hotelPassword"], [name="password"], #password', ELEKTRAWEB_PASS);
+    await page.click('[type="submit"], button.login-btn, button:has-text("Giriş"), button:has-text("Login")');
 
     console.log('Giriş sonrası sayfa bekleniyor...');
     await page.waitForLoadState('networkidle', { timeout: 15000 });
