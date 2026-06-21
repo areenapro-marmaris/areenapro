@@ -118,11 +118,11 @@ export async function GET(req: NextRequest) {
     });
 
     const approvedLeaveKeys = new Set(
-      onayliIzinler.map(d => `${d.personelId}_${tzDateFormatter.format(new Date(d.tarih))}`)
+      onayliIzinler.map((d: any) => `${d.personelId}_${tzDateFormatter.format(new Date(d.tarih))}`)
     );
 
     // Arayüzün beklediği formata dönüştür ve Türkiye Saat Dilimine (Europe/Istanbul) göre formatla
-    const list = kayitlar.map(k => {
+    const list = kayitlar.map((k: any) => {
       // Türkiye saati ile Giriş/Çıkış saatlerini alıyoruz
       const girisFormat = k.girisZamani.toLocaleTimeString('tr-TR', { 
         hour: '2-digit', 

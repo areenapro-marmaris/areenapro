@@ -86,7 +86,7 @@ export async function GET(req: NextRequest) {
 
     // Always mask the issuer if the logged-in user is the subject/target of the incident (ilgiliId === user.id)
     // EXCEPT if the logged-in user is a SUPER_ADMIN (Genel Müdür), who should see everything.
-    const maskedTutanaklar = tutanaklar.map(t => {
+    const maskedTutanaklar = tutanaklar.map((t: any) => {
       if (t.ilgiliId === user.id && user.rol !== 'SUPER_ADMIN') {
         return {
           ...t,
