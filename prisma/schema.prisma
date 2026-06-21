@@ -1,0 +1,195 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Personel {
+  id               String          @id @default(uuid())
+  kullaniciAdi     String          @unique
+  sifre            String
+  adSoyad          String
+  rol              Role            @default(PERSONEL)
+  birimId          String?
+  sirketId         String?
+  sigortaSirketiId String?
+  tabanMaas        Float           @default(0)
+  aktif            Boolean         @default(true)
+  elektraId        String?
+  pdksId           String?
+  gorev            String?
+  iseGirisTarihi   DateTime?
+  istenCikisTarihi DateTime?
+  iban             String?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  birim            Birim?          @relation(fields: [birimId], references: [id])
+  sirket           Sirket?         @relation(fields: [sirketId], references: [id])
+  sigortaSirketi   SigortaSirketi? @relation(fields: [sigortaSirketiId], references: [id])
+  hesapHareketleri PersonelHesap[]
+  pdksKayitlari    PdksKayit[]
+  dilekceler       Dilekce[]
+  tutanakEkleyen   Tutanak[]       @relation("EkleyenTutanaklar")
+  tutanakIlgili    Tutanak[]       @relation("IlgiliTutanaklar")
+  yetkiliBirimler  Birim[]         @relation("BirimYetkilileri")
+  bildirimler      Bildirim[]
+}
+
+enum Role {
+  SUPER_ADMIN
+  YONETICI
+  VEZNE
+  MUHASEBE
+  PERSONEL
+}
+
+model Birim {
+  id        String     @id @default(uuid())
+  ad        String     @unique
+  personel  Personel[]
+  yetkililer Personel[] @relation("BirimYetkilileri")
+}
+
+model Sirket {
+  id        String     @id @default(uuid())
+  ad        String     @unique
+  personel  Personel[]
+}
+
+model SigortaSirketi {
+  id        String     @id @default(uuid())
+  ad        String     @unique
+  personel  Personel[]
+}
+
+model TurOtobus {
+  id               String    @id @default(uuid())
+  tip              String    // "TUR" veya "OTOBUS"
+  firma            String
+  rehberVeyaOtobus String
+  kisiSayisi       Int
+  kisiBasiTutar    Float
+  tutar            Float
+  mudurOnaylandi   Boolean   @default(false)
+  odendiMi         Boolean   @default(false)
+  odemeTarihi      DateTime?
+  tarih            String    // "YYYY-MM-DD"
+  createdAt        DateTime  @default(now())
+}
+
+model KasaHareket {
+  id         String   @id @default(uuid())
+  tur        IslemTuru
+  miktar     Float
+  aciklama   String?
+  tarih      DateTime @default(now())
+  veznedarId String
+}
+
+enum IslemTuru {
+  GELIR
+  GIDER
+}
+
+model PersonelHesap {
+  id         String   @id @default(uuid())
+  personelId String
+  tur        HesapTuru
+  miktar     Float
+  aciklama   String?
+  onaylandiMi Boolean @default(false)
+  odendiMi   Boolean  @default(false)
+  tarih      DateTime @default(now())
+
+  personel   Personel @relation(fields: [personelId], references: [id])
+}
+
+enum HesapTuru {
+  AVANS
+  CEZA
+  KESINTI
+  HAKEDIS
+  MAAS_ODEMESI
+}
+
+model PdksKayit {
+  id         String   @id @default(uuid())
+  personelId String
+  girisZamani DateTime
+  cikisZamani DateTime?
+  kuralDisi  Boolean  @default(false)
+  kesintiOrani Float  @default(0)
+
+  personel   Personel @relation(fields: [personelId], references: [id])
+}
+
+model Dilekce {
+  id         String   @id @default(uuid())
+  personelId String
+  tur        DilekceTuru
+  izinTuru   String?  // EGITIM_IZNI, IS_IZNI, ERKEN_CIKIS_IZNI
+  konu       String
+  icerik     String
+  onayDurumu OnayDurumu @default(BEKLIYOR)
+  tarih      DateTime   @default(now())
+
+  personel   Personel @relation(fields: [personelId], references: [id])
+}
+
+model Tutanak {
+  id               String       @id @default(uuid())
+  ekleyenId        String
+  ilgiliId         String
+  tarih            DateTime     @default(now())
+  konu             String
+  icerik           String
+  savunma          String?
+  savunmaTarihi    DateTime?
+  durum            TutanakDurum @default(YENI)
+  kararTuru        KararTuru?
+  cezaTutari       Float?       @default(0)
+  kararNotu        String?
+  kararTarihi      DateTime?
+
+  ekleyen          Personel     @relation("EkleyenTutanaklar", fields: [ekleyenId], references: [id])
+  ilgili           Personel     @relation("IlgiliTutanaklar", fields: [ilgiliId], references: [id])
+}
+
+enum TutanakDurum {
+  YENI
+  SAVUNMA_YAPILDI
+  KARAR_VERILDI
+}
+
+enum KararTuru {
+  UYARI
+  PARA_CEZASI
+  UZAKLASTIRMA
+}
+
+enum DilekceTuru {
+  IZIN
+  AVANS_TALEBI
+  TUTANAK
+  ODENEK
+}
+
+enum OnayDurumu {
+  BEKLIYOR
+  ONAYLANDI
+  REDDEDILDI
+}
+
+model Bildirim {
+  id         String   @id @default(uuid())
+  personelId String
+  baslik     String
+  mesaj      String
+  okundu     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  personel   Personel @relation(fields: [personelId], references: [id], onDelete: Cascade)
+}

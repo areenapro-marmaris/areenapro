@@ -1,0 +1,121 @@
+[
+  {
+    "endpoint": "https://api.eptera.com/",
+    "wsEndpoint": "wss://poswssvc.eptera.com",
+    "language": "EN",
+    "lightTheme": true,
+    "url": [
+      "pos.eptera.com",
+      "postest.eptera.com"
+    ],
+    "isEptera": true
+  },
+  {
+    "endpoint": "https://4001.hoteladvisor.net/",
+    "language": "EN",
+    "url": [
+      "pos2.elektraweb.com",
+      "pos3.elektraweb.com",
+      "pos3.1.elektraweb.com"
+    ],
+    "forceSecureConnection": true
+  },
+  {
+    "endpoint": "https://yedek24.hoteladvisor.net:4001/",
+    "language": "EN",
+    "url": [
+      "yedek24.pos3.1.elektraweb.com",
+      "yedek24.pos.elektraweb.com"
+    ],
+    "forceSecureConnection": true
+  },
+  {
+    "endpoint": "https://5004.hoteladvisor.net/",
+    "language": "TR",
+    "url": [
+      "cloud.lol.net"
+    ],
+    "forceSecureConnection": false
+  },
+  {
+    "endpoint": "https://webapi.landoflegend.com/",
+    "language": "TR",
+    "url": [
+      "local.lol.net"
+    ],
+    "forceSecureConnection": false
+  },
+  {
+    "endpoint": "https://4001.hoteladvisor.net/",
+    "language": "TR",
+    "url": [
+      "easypms.net"
+    ],
+    "forceSecureConnection": false
+  },
+  {
+    "endpoint": "https://webapi.landoflegend.com/",
+    "language": "TR",
+    "url": [
+      ""
+    ],
+    "forceSecureConnection": false
+  },
+  {
+    "endpoint": "https://4001.hoteladvisor.net/",
+    "language": "TR",
+    "wsEndpoint": "wss://posws.svc.elektraweb.com",
+    "url": [
+      "pos.elektraweb.com",
+      "yenipos.elektraweb.com"
+    ],
+    "forceSecureConnection": true,
+    "eAdisyonEndpoint": "https://eadisyon.elektraweb.com"
+  },
+  {
+    "endpoint": "https://5004.hoteladvisor.net/",
+    "language": "TR",
+    "url": [
+      "pos.travelaps.com",
+      "yenipos.travelaps.com",
+      "pos3.1.travelaps.com"
+    ],
+    "forceSecureConnection": false
+  },
+  {
+    "endpoint": "https://4001.hoteladvisor.net/",
+    "language": "EN",
+    "url": [
+      "pos.easypms.com",
+      "yenipos.easypms.com"
+    ],
+    "forceSecureConnection": true
+  },
+  {
+    "endpoint": "https://4001.hoteladvisor.net/",
+    "language": "TR",
+    "url": [
+      "[0-9a-z]+.ngrok.io"
+    ],
+    "forceSecureConnection": true
+  },
+  {
+    "endpoint": "https://4001.hoteladvisor.net/",
+    "language": "TR",
+    "url": [
+      "localChost"
+    ]
+  },
+  {
+    "endpoint": "https://webapi.tetysblu.com/",
+    "language": "RU",
+    "url": [
+      "pos.tetysblu.com"
+    ]
+  },
+  {
+    "endpoint": "https://4001.hoteladvisor.net/",
+    "wsEndpoint": "wss://posws.svc.elektraweb.com",
+    "language": "TR"
+  }
+]
