@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken } from '@/lib/auth';
 
 // Bu sayfalar login gerektirmez
-const PUBLIC_PATHS = ['/login', '/api/auth/login', '/api/pdks/kayit'];
+const PUBLIC_PATHS = ['/login', '/api/auth/login', '/api/pdks/kayit', '/api/elektraweb'];
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
