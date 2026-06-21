@@ -50,7 +50,7 @@ export async function GET(req: NextRequest) {
           where: { id: user.id },
           include: { yetkiliBirimler: { select: { id: true } } }
         });
-        const birimIds = managerWithBirimler?.yetkiliBirimler.map(b => b.id) || [];
+        const birimIds = managerWithBirimler?.yetkiliBirimler.map((b: { id: string }) => b.id) || [];
         
         tutanaklar = await prisma.tutanak.findMany({
           where: {
