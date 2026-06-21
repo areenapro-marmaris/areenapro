@@ -7,6 +7,19 @@ let cachedData: any = null;
 let cacheTime: number = 0;
 const CACHE_TTL = 5 * 60 * 1000; // 5 dakika (ms)
 
+function formatTime(date: Date): string {
+  try {
+    // Vercel serverless ortamlarında tr-TR veya timezone bulunamayabilir, korumalı hale getiriyoruz
+    return date.toLocaleTimeString('tr-TR', { hour12: false, timeZone: 'Europe/Istanbul' });
+  } catch {
+    try {
+      return date.toLocaleTimeString('en-US', { hour12: false });
+    } catch {
+      return date.toISOString().split('T')[1].slice(0, 8);
+    }
+  }
+}
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const tarih = searchParams.get('tarih') || undefined;
@@ -44,7 +57,7 @@ export async function GET(req: NextRequest) {
           tarih: dbRecord.tarih,
           toplamSatis: dbRecord.toplamSatis,
           personelListesi: dbRecord.personelListesi as any,
-          sonGuncelleme: dbRecord.sonGuncelleme.toLocaleTimeString('tr-TR'),
+          sonGuncelleme: formatTime(dbRecord.sonGuncelleme),
           source: 'cache' as const,
           cacheAge: 'Yerel Sunucudan Alındı'
         };
@@ -68,7 +81,7 @@ export async function GET(req: NextRequest) {
         { adSoyad: 'Can Öz', departman: 'Garson', satis: 6700, masaSayisi: 4 },
         { adSoyad: 'Ahmet Yılmaz', departman: 'Garson', satis: 12450, masaSayisi: 8 },
       ],
-      sonGuncelleme: new Date().toLocaleTimeString('tr-TR'),
+      sonGuncelleme: formatTime(new Date()),
       source: 'mock',
       mesaj: 'ELEKTRAWEB_URL .env dosyasında tanımlı değil. Mock veri gösteriliyor.'
     });
