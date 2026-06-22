@@ -70,9 +70,11 @@ export default function Home() {
   }, []);
 
   // Fetch general management data
-  const fetchData = useCallback(async () => {
+  const fetchData = useCallback(async (forceRefresh = false) => {
+    setLoading(true);
     try {
-      const res = await fetch('/api/elektraweb');
+      const url = `/api/elektraweb${forceRefresh ? '?refresh=true' : ''}`;
+      const res = await fetch(url);
       if (!res.ok) return;
       const json = await res.json();
       if (!json.error) {
@@ -381,7 +383,7 @@ export default function Home() {
             </div>
           )}
           <button
-            onClick={fetchData}
+            onClick={() => fetchData(true)}
             disabled={loading}
             className="flex items-center gap-2 text-slate-300 hover:text-white hover:bg-slate-800 px-3 py-2 rounded-lg text-sm transition-colors border border-slate-700 disabled:opacity-50"
           >
