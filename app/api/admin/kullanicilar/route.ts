@@ -7,7 +7,7 @@ async function getSuperAdmin(req: NextRequest) {
   const token = req.cookies.get('areena_token')?.value;
   if (!token) return null;
   const payload = await verifyToken(token);
-  if (!payload || payload.rol !== 'SUPER_ADMIN') return null;
+  if (!payload || (payload.rol !== 'SUPER_ADMIN' && payload.rol !== 'INSAN_KAYNAKLARI')) return null;
   return payload;
 }
 

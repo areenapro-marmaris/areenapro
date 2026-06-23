@@ -132,8 +132,8 @@ export default function Sidebar({
           return linkEl;
         })}
 
-        {/* Süper Admin Paneli */}
-        {kullanici?.rol === 'SUPER_ADMIN' && (
+        {/* Süper Admin veya İnsan Kaynakları Paneli */}
+        {(kullanici?.rol === 'SUPER_ADMIN' || kullanici?.rol === 'INSAN_KAYNAKLARI') && (
           <>
             <div className="pt-4 pb-2">
               <p className="text-xs font-semibold text-amber-500/70 uppercase tracking-wider px-3">Yönetim</p>
