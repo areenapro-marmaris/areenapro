@@ -424,28 +424,32 @@ export default function DilekcelerYoneticiPage() {
           </div>
 
           {/* Red Header Bar & Workflow Badges (Yeni, Savunma Yapıldı, Karar Verildi) from Screenshot 1 */}
-          <div className="bg-[#c0392b] p-4 rounded-t-xl flex justify-between items-center text-white font-semibold shadow-lg">
+          <div className="bg-[#c0392b] p-4 rounded-t-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-white font-semibold shadow-lg">
             <span className="flex items-center gap-2">
               <ShieldAlert className="w-5 h-5 text-white" /> Tutanaklar
             </span>
-            <div className="flex border border-red-500/50 rounded-lg p-0.5 bg-red-950/40 gap-1">
+            <div className="flex border border-red-500/50 rounded-lg p-0.5 bg-red-950/40 gap-1 w-full sm:w-auto">
               <button 
                 onClick={() => setTutanakFilter("YENI")} 
-                className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all flex items-center gap-1.5 ${tutanakFilter === 'YENI' ? 'bg-[#c0392b] text-white shadow' : 'text-red-200 hover:text-white'}`}
+                className={`flex-1 sm:flex-none justify-center px-2 sm:px-3 py-1.5 rounded-md text-[11px] sm:text-xs font-semibold transition-all flex items-center gap-1 ${tutanakFilter === 'YENI' ? 'bg-[#c0392b] text-white shadow' : 'text-red-200 hover:text-white'}`}
               >
-                Yeni <span className="bg-white/20 px-1.5 py-0.5 rounded-full text-[10px]">{tutanaklar.filter(t => t.durum === 'YENI').length}</span>
+                Yeni <span className="bg-white/20 px-1.5 py-0.5 rounded-full text-[9px] sm:text-[10px]">{tutanaklar.filter(t => t.durum === 'YENI').length}</span>
               </button>
               <button 
                 onClick={() => setTutanakFilter("SAVUNMA_YAPILDI")} 
-                className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all flex items-center gap-1.5 ${tutanakFilter === 'SAVUNMA_YAPILDI' ? 'bg-[#2980b9] text-white shadow' : 'text-blue-200 hover:text-white'}`}
+                className={`flex-1 sm:flex-none justify-center px-2 sm:px-3 py-1.5 rounded-md text-[11px] sm:text-xs font-semibold transition-all flex items-center gap-1 ${tutanakFilter === 'SAVUNMA_YAPILDI' ? 'bg-[#2980b9] text-white shadow' : 'text-blue-200 hover:text-white'}`}
               >
-                Savunma Yapıldı <span className="bg-white/20 px-1.5 py-0.5 rounded-full text-[10px]">{tutanaklar.filter(t => t.durum === 'SAVUNMA_YAPILDI').length}</span>
+                <span className="hidden xs:inline">Savunma Yapıldı</span>
+                <span className="xs:hidden">Savunma</span>
+                <span className="bg-white/20 px-1.5 py-0.5 rounded-full text-[9px] sm:text-[10px]">{tutanaklar.filter(t => t.durum === 'SAVUNMA_YAPILDI').length}</span>
               </button>
               <button 
                 onClick={() => setTutanakFilter("KARAR_VERILDI")} 
-                className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all flex items-center gap-1.5 ${tutanakFilter === 'KARAR_VERILDI' ? 'bg-[#27ae60] text-white shadow' : 'text-emerald-200 hover:text-white'}`}
+                className={`flex-1 sm:flex-none justify-center px-2 sm:px-3 py-1.5 rounded-md text-[11px] sm:text-xs font-semibold transition-all flex items-center gap-1 ${tutanakFilter === 'KARAR_VERILDI' ? 'bg-[#27ae60] text-white shadow' : 'text-emerald-200 hover:text-white'}`}
               >
-                Karar Verildi <span className="bg-white/20 px-1.5 py-0.5 rounded-full text-[10px]">{tutanaklar.filter(t => t.durum === 'KARAR_VERILDI').length}</span>
+                <span className="hidden xs:inline">Karar Verildi</span>
+                <span className="xs:hidden">Karar</span>
+                <span className="bg-white/20 px-1.5 py-0.5 rounded-full text-[9px] sm:text-[10px]">{tutanaklar.filter(t => t.durum === 'KARAR_VERILDI').length}</span>
               </button>
             </div>
           </div>
