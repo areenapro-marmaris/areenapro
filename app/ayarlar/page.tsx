@@ -29,6 +29,8 @@ const rolRenk: Record<string, string> = {
 export default function AyarlarPage() {
   const [personelFilter, setPersonelFilter] = useState<"aktif" | "pasif">("aktif");
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [authLoading, setAuthLoading] = useState(true);
   
   // Data States
   const [personeller, setPersoneller] = useState<any[]>([]);
@@ -63,12 +65,19 @@ export default function AyarlarPage() {
   // Fetch initial data
   const fetchData = async () => {
     try {
-      const [resP, resS, resSi, resB] = await Promise.all([
+      const [resMe, resP, resS, resSi, resB] = await Promise.all([
+        fetch("/api/auth/me"),
         fetch("/api/ayarlar/personel"),
         fetch("/api/ayarlar/sirketler"),
         fetch("/api/ayarlar/sigorta-sirketleri"),
         fetch("/api/ayarlar/birimler"),
       ]);
+      
+      if (resMe.ok) {
+        const dMe = await resMe.json();
+        setCurrentUser(dMe.kullanici);
+      }
+      setAuthLoading(false);
       
       if (resP.ok) setPersoneller(await resP.json());
       if (resS.ok) setSirketler(await resS.json());
@@ -76,6 +85,7 @@ export default function AyarlarPage() {
       if (resB.ok) setBirimler(await resB.json());
     } catch (err) {
       console.error("Veriler yuklenirken hata oluştu:", err);
+      setAuthLoading(false);
     }
   };
 
@@ -210,6 +220,23 @@ export default function AyarlarPage() {
       p.rol.toLowerCase().includes(searchLower);
     return isStatusMatch && isSearchMatch;
   });
+
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  const hasAccess = currentUser?.rol === "SUPER_ADMIN" || currentUser?.rol === "INSAN_KAYNAKLARI";
+  if (!hasAccess) {
+    return (
+      <div className="glass-panel p-12 text-center text-red-400 font-bold border border-red-500/20">
+        Bu sayfaya erişim yetkiniz bulunmamaktadır.
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
