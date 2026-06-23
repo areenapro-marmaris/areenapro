@@ -44,9 +44,9 @@ export default function ClientLayout({
       }
     }
 
-    // İnsan Kaynakları (INSAN_KAYNAKLARI) yetkisi: Dilekçe/Tutanak, PDKS, Personel Ayarları ve Kullanıcı Yönetimi açık
+    // İnsan Kaynakları (INSAN_KAYNAKLARI) yetkisi: Dilekçe/Tutanak, PDKS, Personel Ayarları, Kullanıcı Yönetimi ve Genel Ayarlar açık
     if (rol === 'INSAN_KAYNAKLARI') {
-      const allowedPaths = ['/dilekceler', '/pdks', '/login', '/', '/ayarlar', '/admin'];
+      const allowedPaths = ['/dilekceler', '/pdks', '/login', '/', '/ayarlar', '/admin', '/genel-ayarlar'];
       const isAllowed = allowedPaths.some(p => pathname === p || pathname.startsWith(p + '/'));
       if (!isAllowed) {
         router.push('/');

@@ -94,7 +94,7 @@ export default function Sidebar({
             item.href === '/genel-ayarlar'
           )) return null;
           if (rol === 'VEZNE' && (item.href === '/ayarlar' || item.href === '/genel-ayarlar')) return null;
-          if (rol === 'INSAN_KAYNAKLARI' && item.href !== '/pdks' && item.href !== '/dilekceler' && item.href !== '/ayarlar') return null;
+          if (rol === 'INSAN_KAYNAKLARI' && item.href !== '/pdks' && item.href !== '/dilekceler' && item.href !== '/ayarlar' && item.href !== '/genel-ayarlar') return null;
           if (rol === 'PERSONEL' && item.href !== '/pdks' && item.href !== '/dilekceler') return null;
 
           const isYoneticiPath = pathname.startsWith('/dilekceler/yonetici');
