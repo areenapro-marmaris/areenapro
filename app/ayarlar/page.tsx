@@ -221,7 +221,7 @@ export default function AyarlarPage() {
               <h3 className="text-xl font-bold text-white">
                 {editingId ? `${form.adSoyad} - Düzenle` : "Yeni Personel Ekle"}
               </h3>
-              <button onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-white">
+              <button type="button" onClick={() => setIsModalOpen(false)} className="text-slate-400 hover:text-white">
                 <X className="w-6 h-6" />
               </button>
             </div>
@@ -347,9 +347,14 @@ export default function AyarlarPage() {
                 <label htmlFor="modal-aktif" className="text-sm font-medium text-slate-300">Bu personel aktif çalışıyor (Sisteme giriş yapabilir)</label>
               </div>
 
-              <button type="submit" disabled={loading} className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 text-white font-bold py-3 rounded-lg transition-colors mt-4">
-                {loading ? "Kaydediliyor..." : (editingId ? "Değişiklikleri Kaydet" : "Personeli Ekle")}
-              </button>
+              <div className="flex gap-3 mt-4">
+                <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-lg transition-colors">
+                  Vazgeç / Kapat
+                </button>
+                <button type="submit" disabled={loading} className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 text-white font-bold py-3 rounded-lg transition-colors">
+                  {loading ? "Kaydediliyor..." : (editingId ? "Değişiklikleri Kaydet" : "Personeli Ekle")}
+                </button>
+              </div>
             </form>
           </div>
         </div>
