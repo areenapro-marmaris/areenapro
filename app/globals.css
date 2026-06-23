@@ -107,6 +107,21 @@
   }
 
   /* Light Theme Utility Overrides */
+  body.light {
+    background-color: #f1f5f9 !important;
+    background-image: radial-gradient(circle at top right, #f8fafc, #cbd5e1) !important;
+    color: #0f172a !important;
+  }
+  body.light .glass {
+    background-color: rgba(255, 255, 255, 0.8) !important;
+    border-color: rgba(203, 213, 225, 0.8) !important;
+    color: #0f172a !important;
+  }
+  body.light .glass-panel {
+    background-color: rgba(255, 255, 255, 0.85) !important;
+    border-color: rgba(203, 213, 225, 0.8) !important;
+    color: #0f172a !important;
+  }
   .light .text-white,
   .light h1,
   .light h2,
