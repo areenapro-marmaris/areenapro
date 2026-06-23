@@ -1,4 +1,4 @@
-import { Bell, Search, Menu, LogOut, ChevronDown, CheckCircle } from 'lucide-react';
+import { Bell, Search, Menu, LogOut, ChevronDown, CheckCircle, Sun, Moon } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 interface Kullanici {
@@ -21,6 +21,7 @@ const rolEtiket: Record<string, string> = {
   YONETICI: 'Müdür',
   VEZNE: 'Vezne',
   MUHASEBE: 'Muhasebe',
+  INSAN_KAYNAKLARI: 'İnsan Kaynakları',
   PERSONEL: 'Genel',
 };
 
@@ -36,6 +37,7 @@ export default function Topbar({
   const [showMenu, setShowMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [bildirimler, setBildirimler] = useState<Bildirim[]>([]);
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
   const fetchBildirimler = async () => {
     try {
@@ -50,6 +52,16 @@ export default function Topbar({
   };
 
   useEffect(() => {
+    // Load theme from localStorage
+    const savedTheme = localStorage.getItem('theme') as 'dark' | 'light' | null;
+    const initialTheme = savedTheme || 'dark';
+    setTheme(initialTheme);
+    if (initialTheme === 'light') {
+      document.body.classList.add('light');
+    } else {
+      document.body.classList.remove('light');
+    }
+
     if (kullanici) {
       fetchBildirimler();
       // 30 saniyede bir bildirimleri arka planda yenile
@@ -57,6 +69,17 @@ export default function Topbar({
       return () => clearInterval(interval);
     }
   }, [kullanici]);
+
+  const toggleTheme = () => {
+    const nextTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(nextTheme);
+    localStorage.setItem('theme', nextTheme);
+    if (nextTheme === 'light') {
+      document.body.classList.add('light');
+    } else {
+      document.body.classList.remove('light');
+    }
+  };
 
   const unreadCount = bildirimler.filter(b => !b.okundu).length;
 
@@ -105,6 +128,15 @@ export default function Topbar({
       </div>
 
       <div className="flex items-center space-x-3">
+        {/* Tema Değiştirici */}
+        <button
+          onClick={toggleTheme}
+          className="p-2 text-slate-400 hover:text-white transition-colors rounded-full hover:bg-slate-800/80"
+          title={theme === 'dark' ? 'Beyaz Mod' : 'Karanlık Mod'}
+        >
+          {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+        </button>
+
         {/* Bildirim Zili ve Dropdown */}
         <div className="relative">
           <button

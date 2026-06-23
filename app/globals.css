@@ -71,11 +71,142 @@
   }
 }
 
+@layer base {
+  :root {
+    --body-bg-image: radial-gradient(circle at top right, #1e293b, #0f172a);
+    --glass-bg: rgba(15, 23, 42, 0.5);
+    --glass-panel-bg: rgba(30, 41, 59, 0.6);
+    --glass-border: rgba(51, 65, 85, 0.5);
+  }
+
+  .light {
+    --background: #f8fafc;
+    --foreground: #0f172a;
+    --card: #ffffff;
+    --card-foreground: #0f172a;
+    --popover: #ffffff;
+    --popover-foreground: #0f172a;
+    --primary: #2563eb;
+    --primary-foreground: #ffffff;
+    --secondary: #e2e8f0;
+    --secondary-foreground: #0f172a;
+    --muted: #f1f5f9;
+    --muted-foreground: #64748b;
+    --accent: #f1f5f9;
+    --accent-foreground: #0f172a;
+    --destructive: #dc2626;
+    --destructive-foreground: #ffffff;
+    --border: #cbd5e1;
+    --input: #e2e8f0;
+    --ring: #2563eb;
+
+    --body-bg-image: radial-gradient(circle at top right, #f1f5f9, #e2e8f0);
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-panel-bg: rgba(255, 255, 255, 0.75);
+    --glass-border: rgba(203, 213, 225, 0.8);
+  }
+
+  /* Light Theme Utility Overrides */
+  .light .text-white,
+  .light h1,
+  .light h2,
+  .light h3,
+  .light h4,
+  .light h5,
+  .light h6 {
+    color: #0f172a !important;
+  }
+  .light .text-slate-200 {
+    color: #1e293b !important;
+  }
+  .light .text-slate-300 {
+    color: #334155 !important;
+  }
+  .light .text-slate-400 {
+    color: #475569 !important;
+  }
+  .light .bg-slate-950 {
+    background-color: #f1f5f9 !important;
+  }
+  .light .bg-slate-900 {
+    background-color: #f8fafc !important;
+  }
+  .light .bg-slate-900\/80 {
+    background-color: rgba(241, 245, 249, 0.8) !important;
+  }
+  .light .bg-slate-900\/60 {
+    background-color: rgba(241, 245, 249, 0.6) !important;
+  }
+  .light .bg-slate-900\/40 {
+    background-color: rgba(241, 245, 249, 0.4) !important;
+  }
+  .light .bg-slate-900\/30 {
+    background-color: rgba(241, 245, 249, 0.3) !important;
+  }
+  .light .bg-slate-800 {
+    background-color: #ffffff !important;
+  }
+  .light .bg-slate-800\/80 {
+    background-color: rgba(255, 255, 255, 0.8) !important;
+  }
+  .light .bg-slate-800\/60 {
+    background-color: rgba(255, 255, 255, 0.6) !important;
+  }
+  .light .bg-slate-800\/30 {
+    background-color: rgba(255, 255, 255, 0.3) !important;
+  }
+  .light .bg-slate-800\/20 {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+  }
+  .light .border-slate-700 {
+    border-color: #cbd5e1 !important;
+  }
+  .light .border-slate-700\/50 {
+    border-color: rgba(203, 213, 225, 0.5) !important;
+  }
+  .light .border-slate-800 {
+    border-color: #cbd5e1 !important;
+  }
+  .light .divide-slate-800 > :not([hidden]) ~ :not([hidden]) {
+    border-color: #cbd5e1 !important;
+  }
+  .light input,
+  .light select,
+  .light textarea {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    border-color: #cbd5e1 !important;
+  }
+  .light input::placeholder,
+  .light textarea::placeholder {
+    color: #94a3b8 !important;
+  }
+  .light .hover\:bg-slate-800\/80:hover {
+    background-color: rgba(226, 232, 240, 0.8) !important;
+  }
+  .light .hover\:bg-slate-800\/40:hover {
+    background-color: rgba(226, 232, 240, 0.4) !important;
+  }
+  .light .hover\:bg-slate-800\/30:hover {
+    background-color: rgba(226, 232, 240, 0.3) !important;
+  }
+  .light .hover\:bg-slate-800:hover {
+    background-color: #e2e8f0 !important;
+  }
+}
+
 @layer utilities {
   .glass {
-    @apply bg-slate-900/50 backdrop-blur-xl border border-slate-700/50 shadow-xl;
+    background-color: var(--glass-bg, rgba(15, 23, 42, 0.5));
+    backdrop-filter: blur(24px);
+    border: 1px solid var(--glass-border, rgba(51, 65, 85, 0.5));
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   }
   .glass-panel {
-    @apply bg-slate-800/60 backdrop-blur-md border border-slate-700/50 rounded-xl shadow-lg;
+    background-color: var(--glass-panel-bg, rgba(30, 41, 59, 0.6));
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border, rgba(51, 65, 85, 0.5));
+    border-radius: var(--radius);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   }
 }

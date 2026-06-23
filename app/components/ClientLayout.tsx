@@ -23,6 +23,14 @@ export default function ClientLayout({
   const pathname = usePathname();
 
   useEffect(() => {
+    // Sync theme
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+      document.body.classList.add('light');
+    } else {
+      document.body.classList.remove('light');
+    }
+
     fetch("/api/auth/me")
       .then((r) => r.json())
       .then((d) => { if (d.kullanici) setKullanici(d.kullanici); })
