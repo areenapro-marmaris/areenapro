@@ -66,15 +66,12 @@ export default function PersonelListesiPage() {
   });
 
   const exportToExcel = () => {
-    const headers = ["Adı Soyadı", "Birim / Departman", "Görevi / Pozisyonu", "Sistemsel Rol", "Kullanıcı Adı", "IBAN", "İşe Giriş Tarihi", "PDKS ID"];
+    const headers = ["Adı Soyadı", "Birim / Departman", "Görevi / Pozisyonu", "IBAN", "PDKS ID"];
     const rows = filteredPersonel.map(p => [
       p.adSoyad,
       p.birim?.ad || 'AREENA',
       p.gorev || '-',
-      rolEtiketleri[p.rol] || p.rol,
-      p.kullaniciAdi,
       p.iban || '-',
-      p.iseGirisTarihi ? new Date(p.iseGirisTarihi).toLocaleDateString('tr-TR') : '-',
       p.pdksId || '-'
     ]);
 
@@ -164,15 +161,12 @@ export default function PersonelListesiPage() {
                 <th className="px-6 py-4 font-semibold">Adı Soyadı</th>
                 <th className="px-6 py-4 font-semibold">Birim / Departman</th>
                 <th className="px-6 py-4 font-semibold">Görevi / Pozisyonu</th>
-                <th className="px-6 py-4 font-semibold">Sistemsel Rol</th>
-                <th className="px-6 py-4 font-semibold">Kullanıcı Adı</th>
-                <th className="px-6 py-4 font-semibold">İşe Giriş Tarihi</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800">
               {filteredPersonel.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-slate-500">
+                  <td colSpan={4} className="px-6 py-12 text-center text-slate-500">
                     Gösterilecek aktif personel kaydı bulunamadı.
                   </td>
                 </tr>
@@ -186,15 +180,6 @@ export default function PersonelListesiPage() {
                     </td>
                     <td className="px-6 py-3.5 text-slate-300">
                       {p.gorev || <span className="text-slate-500">-</span>}
-                    </td>
-                    <td className="px-6 py-3.5">
-                      <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-bold border ${rolRenk[p.rol] || 'bg-slate-700 text-slate-400 border-slate-600'}`}>
-                        <Shield className="w-3 h-3" /> {rolEtiketleri[p.rol] || p.rol}
-                      </span>
-                    </td>
-                    <td className="px-6 py-3.5 text-slate-400 font-mono text-xs">{p.kullaniciAdi}</td>
-                    <td className="px-6 py-3.5 text-slate-400 font-mono text-xs">
-                      {p.iseGirisTarihi ? new Date(p.iseGirisTarihi).toLocaleDateString('tr-TR') : '-'}
                     </td>
                   </tr>
                 ))
