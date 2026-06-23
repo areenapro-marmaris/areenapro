@@ -97,8 +97,9 @@ export default function Sidebar({
           if (rol === 'INSAN_KAYNAKLARI' && item.href !== '/pdks' && item.href !== '/dilekceler' && item.href !== '/ayarlar' && item.href !== '/genel-ayarlar') return null;
           if (rol === 'PERSONEL' && item.href !== '/pdks' && item.href !== '/dilekceler') return null;
 
-          const isYoneticiPath = pathname.startsWith('/dilekceler/yonetici');
-          const isActive = isYoneticiPath ? false : (pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href)));
+           const isYoneticiPath = pathname.startsWith('/dilekceler/yonetici');
+          const isPersonelListPath = pathname.startsWith('/ayarlar/personel-listesi');
+          const isActive = (isYoneticiPath || isPersonelListPath) ? false : (pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href)));
           
           const linkEl = (
             <Link
@@ -124,6 +125,22 @@ export default function Sidebar({
                 >
                   <ShieldCheck className={`w-4 h-4 transition-colors ${isYoneticiPath ? 'text-indigo-400' : 'text-slate-400 group-hover:text-indigo-400'}`} />
                   <span className={`text-sm font-medium transition-colors ${isYoneticiPath ? 'text-indigo-400' : 'group-hover:text-white'}`}>Tutanaklar Yönetici</span>
+                </Link>
+              </div>
+            );
+          }
+
+          if (item.href === '/ayarlar' && (rol === 'SUPER_ADMIN' || rol === 'INSAN_KAYNAKLARI')) {
+            return (
+              <div key="ayarlar-group" className="space-y-1">
+                {linkEl}
+                <Link
+                  href="/ayarlar/personel-listesi"
+                  onClick={() => setIsOpen(false)}
+                  className={`flex items-center space-x-3 pl-8 pr-3 py-2 rounded-lg transition-all group ${isPersonelListPath ? 'bg-indigo-500/20 text-indigo-400 font-bold border-l-2 border-indigo-500' : 'hover:bg-slate-800/80'}`}
+                >
+                  <Users className={`w-4 h-4 transition-colors ${isPersonelListPath ? 'text-indigo-400' : 'text-slate-400 group-hover:text-indigo-400'}`} />
+                  <span className={`text-sm font-medium transition-colors ${isPersonelListPath ? 'text-indigo-400' : 'group-hover:text-white'}`}>Personel Listesi</span>
                 </Link>
               </div>
             );
