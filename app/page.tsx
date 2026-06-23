@@ -147,6 +147,97 @@ export default function Home() {
   }
 
   // ----------------------------------------------------
+  // ----------------------------------------------------
+  // INSAN KAYNAKLARI HOME PAGE RENDERING
+  // ----------------------------------------------------
+  if (currentUser?.rol === 'INSAN_KAYNAKLARI') {
+    return (
+      <div className="space-y-6">
+        {/* Hoş Geldiniz Banner */}
+        <div className="glass-panel p-6 md:p-8 bg-gradient-to-r from-slate-800/80 to-pink-900/20 border-l-4 border-l-pink-500">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-white">Merhaba, {currentUser.adSoyad}!</h1>
+            <p className="text-slate-300 mt-1">Club Areena İnsan Kaynakları Yönetim Paneline Hoş Geldiniz.</p>
+            <div className="flex items-center gap-2 mt-3 text-xs text-slate-400 bg-slate-900/60 w-fit px-3 py-1.5 rounded-full border border-slate-700/50">
+              <span className="w-2 h-2 rounded-full bg-pink-500 animate-pulse"></span>
+              <span>Oturum Tipi: İnsan Kaynakları</span>
+            </div>
+          </div>
+        </div>
+
+        {/* 3 Ana Modül Kartı */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Kullanıcı Yönetimi */}
+          <div className="glass-panel p-6 flex flex-col justify-between group hover:bg-slate-800/80 transition-all duration-300">
+            <div>
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-white">Kullanıcı Yönetimi</h3>
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-pink-500/10 text-pink-400">
+                  <UserCheck className="w-5 h-5" />
+                </div>
+              </div>
+              <p className="text-xs text-slate-400 mt-1">Giriş bilgileri ve yetki atamaları</p>
+              <div className="mt-4 text-sm text-slate-300">
+                Sisteme yeni giriş yapacak personellerin şifre ve yetki/rol ayarlarını bu ekrandan yönetebilirsiniz.
+              </div>
+            </div>
+            <div className="mt-6 pt-4 border-t border-slate-700/50">
+              <Link href="/admin/kullanicilar" className="flex items-center justify-between text-sm text-pink-400 hover:text-pink-300 font-medium">
+                <span>Kullanıcı Yönetimine Git</span>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Personel Ayarları */}
+          <div className="glass-panel p-6 flex flex-col justify-between group hover:bg-slate-800/80 transition-all duration-300">
+            <div>
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-white">Personel Ayarları</h3>
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-blue-500/10 text-blue-400">
+                  <Users className="w-5 h-5" />
+                </div>
+              </div>
+              <p className="text-xs text-slate-400 mt-1">Personel özlük, maaş, birim ve sigorta bilgileri</p>
+              <div className="mt-4 text-sm text-slate-300">
+                Çalışanların aktiflik durumunu, IBAN, taban maaş, birim ve işe giriş-çıkış tarihlerini güncelleyebilirsiniz.
+              </div>
+            </div>
+            <div className="mt-6 pt-4 border-t border-slate-700/50">
+              <Link href="/ayarlar" className="flex items-center justify-between text-sm text-blue-400 hover:text-blue-300 font-medium">
+                <span>Personel Yönetimine Git</span>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+          </div>
+
+          {/* PDKS & Dilekçeler */}
+          <div className="glass-panel p-6 flex flex-col justify-between group hover:bg-slate-800/80 transition-all duration-300">
+            <div>
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-white">PDKS & Dilekçeler</h3>
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center bg-indigo-500/10 text-indigo-400">
+                  <Calendar className="w-5 h-5" />
+                </div>
+              </div>
+              <p className="text-xs text-slate-400 mt-1">Giriş çıkış takipleri ve izin dilekçeleri</p>
+              <div className="mt-4 text-sm text-slate-300">
+                Personelin giriş-çıkış verilerini izleyebilir ve izin/avans gibi dilekçelerini görüntüleyebilirsiniz.
+              </div>
+            </div>
+            <div className="mt-6 pt-4 border-t border-slate-700/50">
+              <Link href="/pdks" className="flex items-center justify-between text-sm text-indigo-400 hover:text-indigo-300 font-medium">
+                <span>PDKS Takibini Aç</span>
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ----------------------------------------------------
   // PERSONEL HOME PAGE RENDERING
   // ----------------------------------------------------
   if (currentUser?.rol === 'PERSONEL') {
