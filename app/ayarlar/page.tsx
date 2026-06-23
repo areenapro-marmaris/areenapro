@@ -6,13 +6,14 @@ import {
   Heart, FolderPlus, Key, Info, CreditCard, Calendar, UserX, UserCheck
 } from "lucide-react";
 
-const roller = ["PERSONEL", "VEZNE", "MUHASEBE", "YONETICI", "SUPER_ADMIN"];
+const roller = ["PERSONEL", "INSAN_KAYNAKLARI", "VEZNE", "MUHASEBE", "YONETICI", "SUPER_ADMIN"];
 
 const rolEtiketleri: Record<string, string> = {
   SUPER_ADMIN: "Genel Müdür",
   YONETICI: "Müdür",
   VEZNE: "Vezne",
   MUHASEBE: "Muhasebe",
+  INSAN_KAYNAKLARI: "İnsan Kaynakları",
   PERSONEL: "Genel",
 };
 
@@ -21,6 +22,7 @@ const rolRenk: Record<string, string> = {
   YONETICI: "bg-orange-500/10 text-orange-400 border-orange-500/20",
   MUHASEBE: "bg-purple-500/10 text-purple-400 border-purple-500/20",
   VEZNE: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+  INSAN_KAYNAKLARI: "bg-pink-500/10 text-pink-400 border-pink-500/20",
   PERSONEL: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
 };
 

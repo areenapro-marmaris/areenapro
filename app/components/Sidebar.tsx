@@ -35,6 +35,7 @@ const rolEtiket: Record<string, string> = {
   YONETICI: 'Müdür',
   VEZNE: 'Vezne',
   MUHASEBE: 'Muhasebe',
+  INSAN_KAYNAKLARI: 'İnsan Kaynakları',
   PERSONEL: 'Genel',
 };
 
@@ -86,8 +87,14 @@ export default function Sidebar({
         {navItems.map((item) => {
           // Rol bazlı menü filtreleme
           const rol = kullanici?.rol;
-          if (rol === 'YONETICI' && item.href === '/sistemler') return null;
+          if (rol === 'YONETICI' && (
+            item.href === '/sistemler' ||
+            item.href === '/personel-kasa' ||
+            item.href === '/ayarlar' ||
+            item.href === '/genel-ayarlar'
+          )) return null;
           if (rol === 'VEZNE' && (item.href === '/ayarlar' || item.href === '/genel-ayarlar')) return null;
+          if (rol === 'INSAN_KAYNAKLARI' && item.href !== '/pdks' && item.href !== '/dilekceler' && item.href !== '/ayarlar') return null;
           if (rol === 'PERSONEL' && item.href !== '/pdks' && item.href !== '/dilekceler') return null;
 
           const isYoneticiPath = pathname.startsWith('/dilekceler/yonetici');

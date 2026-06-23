@@ -43,6 +43,15 @@ export default function ClientLayout({
         router.push('/');
       }
     }
+
+    // İnsan Kaynakları (INSAN_KAYNAKLARI) yetkisi: Dilekçe/Tutanak, PDKS ve Personel Ayarları (ayarlar) açık
+    if (rol === 'INSAN_KAYNAKLARI') {
+      const allowedPaths = ['/dilekceler', '/pdks', '/login', '/', '/ayarlar'];
+      const isAllowed = allowedPaths.some(p => pathname === p || pathname.startsWith(p + '/'));
+      if (!isAllowed) {
+        router.push('/');
+      }
+    }
     
     // Vezne (VEZNE) yetkisi: Dilekçeleri görme (yonetici), Personel Ayarları, Genel Ayarlar hariç açık
     if (rol === 'VEZNE') {
@@ -53,9 +62,15 @@ export default function ClientLayout({
       }
     }
 
-    // Müdür (YONETICI) yetkisi: Anlık Sistem (sistemler) hariç açık
+    // Müdür (YONETICI) yetkisi: Anlık Sistem, admin, personel-kasa, ayarlar ve genel-ayarlar hariç açık
     if (rol === 'YONETICI') {
-      const restrictedPaths = ['/sistemler', '/admin'];
+      const restrictedPaths = [
+        '/sistemler',
+        '/admin',
+        '/personel-kasa',
+        '/ayarlar',
+        '/genel-ayarlar'
+      ];
       const isRestricted = restrictedPaths.some(p => pathname === p || pathname.startsWith(p + '/'));
       if (isRestricted) {
         router.push('/');

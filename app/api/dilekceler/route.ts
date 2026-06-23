@@ -33,8 +33,8 @@ export async function GET(req: NextRequest) {
     const isManager = (user.rol === 'SUPER_ADMIN' || user.rol === 'YONETICI') && !kisisel;
 
     if (isManager) {
-      if (user.rol === 'SUPER_ADMIN') {
-        // Super Admins see all petitions
+      if (user.rol === 'SUPER_ADMIN' || user.rol === 'YONETICI') {
+        // Super Admins and Managers see all petitions
         dilekceler = await prisma.dilekce.findMany({
           include: {
             personel: {

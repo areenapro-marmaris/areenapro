@@ -17,6 +17,7 @@ const ROLLER = [
   { value: 'YONETICI', label: 'Müdür', color: 'text-blue-400 bg-blue-500/10' },
   { value: 'VEZNE', label: 'Vezne', color: 'text-emerald-400 bg-emerald-500/10' },
   { value: 'MUHASEBE', label: 'Muhasebe', color: 'text-purple-400 bg-purple-500/10' },
+  { value: 'INSAN_KAYNAKLARI', label: 'İnsan Kaynakları', color: 'text-pink-400 bg-pink-500/10' },
   { value: 'PERSONEL', label: 'Genel', color: 'text-slate-400 bg-slate-500/10' },
 ];
 

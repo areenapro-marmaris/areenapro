@@ -34,12 +34,12 @@ export async function GET(req: NextRequest) {
     const isManager = (user.rol === 'SUPER_ADMIN' || user.rol === 'YONETICI') && !kisisel;
 
     if (isManager) {
-      if (user.rol === 'SUPER_ADMIN') {
-        // Super Admins see all incidents
+      if (user.rol === 'SUPER_ADMIN' || user.rol === 'YONETICI') {
+        // Super Admins and Managers see all incidents
         tutanaklar = await prisma.tutanak.findMany({
           include: {
-            ekleyen: { select: { adSoyad: true, kullaniciAdi: true } },
-            ilgili: { select: { adSoyad: true, kullaniciAdi: true, birim: { select: { ad: true } } } }
+            ekleyen: { select: { id: true, adSoyad: true, kullaniciAdi: true } },
+            ilgili: { select: { id: true, adSoyad: true, kullaniciAdi: true, birim: { select: { ad: true } } } }
           },
           orderBy: { tarih: 'desc' },
         });
@@ -60,8 +60,8 @@ export async function GET(req: NextRequest) {
             ]
           },
           include: {
-            ekleyen: { select: { adSoyad: true, kullaniciAdi: true } },
-            ilgili: { select: { adSoyad: true, kullaniciAdi: true, birim: { select: { ad: true } } } }
+            ekleyen: { select: { id: true, adSoyad: true, kullaniciAdi: true } },
+            ilgili: { select: { id: true, adSoyad: true, kullaniciAdi: true, birim: { select: { ad: true } } } }
           },
           orderBy: { tarih: 'desc' },
         });
@@ -85,7 +85,19 @@ export async function GET(req: NextRequest) {
 
     // Always mask the issuer if the logged-in user is the subject/target of the incident (ilgiliId === user.id)
     // EXCEPT if the logged-in user is a SUPER_ADMIN (Genel Müdür), who should see everything.
+    // ALSO mask for YONETICI so they can see tutanaks but cannot see who held the tutanak against whom.
     const maskedTutanaklar = tutanaklar.map((t: any) => {
+      if (user.rol === 'YONETICI') {
+        return {
+          ...t,
+          ekleyenId: 'hidden',
+          ekleyen: {
+            id: 'hidden',
+            adSoyad: 'Areena Personel',
+            kullaniciAdi: 'yönetici'
+          }
+        };
+      }
       if (t.ilgiliId === user.id && user.rol !== 'SUPER_ADMIN') {
         return {
           ...t,
