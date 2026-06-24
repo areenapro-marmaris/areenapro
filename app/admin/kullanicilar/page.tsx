@@ -83,9 +83,10 @@ export default function KullaniciYonetimiPage() {
 
   const startEdit = (k: Kullanici) => {
     setEditId(k.id);
-    setForm({ adSoyad: k.adSoyad, kullaniciAdi: k.kullaniciAdi, sifre: '', rol: k.rol });
+    setForm({ adSoyad: k.adSoyad, kullaniciAdi: k.kullaniciAdi, sifre: '', rol: k.rol || 'PERSONEL' });
     setShowForm(true);
     setError('');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const rolBilgi = (rol: string) => ROLLER.find(r => r.value === rol);
