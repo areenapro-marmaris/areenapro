@@ -32,7 +32,7 @@ export default function LoginPage() {
       }
 
       if (data.token) {
-        document.cookie = `areena_token=${data.token}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax; Secure`;
+        document.cookie = `areena_token=${data.token}; path=/; max-age=${7 * 24 * 60 * 60}; Secure`;
       }
 
       window.location.href = "/";
