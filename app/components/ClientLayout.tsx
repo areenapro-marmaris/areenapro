@@ -52,6 +52,15 @@ export default function ClientLayout({
       }
     }
 
+    // Şef (SEF) yetkisi: Sadece Dilekçe/Tutanak, PDKS, Şef Checklist ve Ana Sayfa
+    if (rol === 'SEF') {
+      const allowedPaths = ['/dilekceler', '/pdks', '/login', '/', '/chef-checklist'];
+      const isAllowed = allowedPaths.some(p => pathname === p || pathname.startsWith(p + '/'));
+      if (!isAllowed) {
+        router.push('/');
+      }
+    }
+
     // İnsan Kaynakları (INSAN_KAYNAKLARI) yetkisi: Dilekçe/Tutanak, PDKS, Personel Ayarları, Kullanıcı Yönetimi ve Genel Ayarlar açık
     if (rol === 'INSAN_KAYNAKLARI') {
       const allowedPaths = ['/dilekceler', '/pdks', '/login', '/', '/ayarlar', '/admin', '/genel-ayarlar'];
@@ -63,7 +72,7 @@ export default function ClientLayout({
     
     // Vezne (VEZNE) yetkisi: Dilekçeleri görme (yonetici), Personel Ayarları, Genel Ayarlar hariç açık
     if (rol === 'VEZNE') {
-      const restrictedPaths = ['/ayarlar', '/genel-ayarlar', '/dilekceler/yonetici', '/admin'];
+      const restrictedPaths = ['/ayarlar', '/genel-ayarlar', '/dilekceler/yonetici', '/admin', '/chef-checklist'];
       const isRestricted = restrictedPaths.some(p => pathname === p || pathname.startsWith(p + '/'));
       if (isRestricted) {
         router.push('/');
@@ -77,7 +86,8 @@ export default function ClientLayout({
         '/admin',
         '/personel-kasa',
         '/ayarlar',
-        '/genel-ayarlar'
+        '/genel-ayarlar',
+        '/chef-checklist'
       ];
       const isRestricted = restrictedPaths.some(p => pathname === p || pathname.startsWith(p + '/'));
       if (isRestricted) {

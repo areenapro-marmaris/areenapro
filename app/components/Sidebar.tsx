@@ -10,6 +10,7 @@ import {
   Users,
   X,
   ShieldCheck,
+  ClipboardList,
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
@@ -27,6 +28,7 @@ const navItems = [
   { name: 'Personel Kasa', href: '/personel-kasa', icon: Briefcase },
   { name: 'Personel Ayarları', href: '/ayarlar', icon: Users },
   { name: 'Dilekçe & Tutanak', href: '/dilekceler', icon: FileText },
+  { name: 'Şef Checklist', href: '/chef-checklist', icon: ClipboardList },
   { name: 'Genel Ayarlar', href: '/genel-ayarlar', icon: Settings },
 ];
 
@@ -88,6 +90,8 @@ export default function Sidebar({
         {navItems.map((item) => {
           // Rol bazlı menü filtreleme
           const rol = kullanici?.rol;
+          if (item.href === '/chef-checklist' && rol !== 'SUPER_ADMIN' && rol !== 'SEF') return null;
+
           if (rol === 'YONETICI' && (
             item.href === '/sistemler' ||
             item.href === '/personel-kasa' ||
@@ -96,7 +100,8 @@ export default function Sidebar({
           )) return null;
           if (rol === 'VEZNE' && (item.href === '/ayarlar' || item.href === '/genel-ayarlar')) return null;
           if (rol === 'INSAN_KAYNAKLARI' && item.href !== '/pdks' && item.href !== '/dilekceler' && item.href !== '/ayarlar' && item.href !== '/genel-ayarlar') return null;
-          if ((rol === 'PERSONEL' || rol === 'SEF') && item.href !== '/pdks' && item.href !== '/dilekceler') return null;
+          if (rol === 'PERSONEL' && item.href !== '/pdks' && item.href !== '/dilekceler') return null;
+          if (rol === 'SEF' && item.href !== '/pdks' && item.href !== '/dilekceler' && item.href !== '/chef-checklist') return null;
 
            const isYoneticiPath = pathname.startsWith('/dilekceler/yonetici');
           const isPersonelListPath = pathname.startsWith('/ayarlar/personel-listesi');

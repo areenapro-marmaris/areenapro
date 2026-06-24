@@ -37,6 +37,8 @@ model Personel {
   tutanakIlgili    Tutanak[]       @relation("IlgiliTutanaklar")
   yetkiliBirimler  Birim[]         @relation("BirimYetkilileri")
   bildirimler      Bildirim[]
+  chefChecklists   ChefChecklist[] @relation("PersonelChecklistleri")
+  createdChecklists ChefChecklist[] @relation("SefChecklistleri")
 }
 
 enum Role {
@@ -207,4 +209,25 @@ model ElektraSatis {
   personelListesi Json     // JSON array of PersonelSatis
   sonGuncelleme  DateTime @default(now())
 }
+
+model ChefChecklist {
+  id                   String   @id @default(uuid())
+  tarih                DateTime @default(now())
+  personelId           String
+  sefId                String
+  isletmeHijyen        String   // "KOTU", "NORMAL", "IYI"
+  personelUniforma     String   // "KOTU", "NORMAL", "IYI"
+  masaSetup            String   // "KOTU", "NORMAL", "IYI"
+  komiTasima           String   // "KOTU", "NORMAL", "IYI"
+  garsonServis         String   // "KOTU", "NORMAL", "IYI"
+  personelDevamlilik   String   // "KOTU", "NORMAL", "IYI"
+  hesapTahsilat        String   // "KOTU", "NORMAL", "IYI"
+  satisTaktik          String   // "KOTU", "NORMAL", "IYI"
+  garsonPortfoy        String   // "KOTU", "NORMAL", "IYI"
+  musteriMemnuniyeti   String   // "KOTU", "NORMAL", "IYI"
+
+  personel             Personel @relation("PersonelChecklistleri", fields: [personelId], references: [id], onDelete: Cascade)
+  sef                  Personel @relation("SefChecklistleri", fields: [sefId], references: [id], onDelete: Cascade)
+}
+
 
