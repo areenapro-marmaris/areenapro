@@ -39,6 +39,9 @@ export async function GET(req: NextRequest) {
           include: {
             personel: {
               select: { adSoyad: true, kullaniciAdi: true }
+            },
+            onaylayan: {
+              select: { adSoyad: true, kullaniciAdi: true }
             }
           },
           orderBy: { tarih: 'desc' },
@@ -61,6 +64,9 @@ export async function GET(req: NextRequest) {
           include: {
             personel: {
               select: { adSoyad: true, kullaniciAdi: true }
+            },
+            onaylayan: {
+              select: { adSoyad: true, kullaniciAdi: true }
             }
           },
           orderBy: { tarih: 'desc' },
@@ -72,6 +78,9 @@ export async function GET(req: NextRequest) {
         where: { personelId: user.id },
         include: {
           personel: {
+            select: { adSoyad: true, kullaniciAdi: true }
+          },
+          onaylayan: {
             select: { adSoyad: true, kullaniciAdi: true }
           }
         },
@@ -135,7 +144,7 @@ export async function PUT(req: NextRequest) {
 
     const guncelDilekce = await prisma.dilekce.update({
       where: { id },
-      data: { onayDurumu }
+      data: { onayDurumu, onaylayanId: user.id }
     });
 
     // Bildirim oluştur

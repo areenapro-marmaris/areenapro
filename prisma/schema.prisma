@@ -31,7 +31,8 @@ model Personel {
   sigortaSirketi   SigortaSirketi? @relation(fields: [sigortaSirketiId], references: [id])
   hesapHareketleri PersonelHesap[]
   pdksKayitlari    PdksKayit[]
-  dilekceler       Dilekce[]
+  dilekceler          Dilekce[]       @relation("PersonelDilekceleri")
+  onaylananDilekceler Dilekce[]       @relation("OnaylananDilekceler")
   tutanakEkleyen   Tutanak[]       @relation("EkleyenTutanaklar")
   tutanakIlgili    Tutanak[]       @relation("IlgiliTutanaklar")
   yetkiliBirimler  Birim[]         @relation("BirimYetkilileri")
@@ -128,16 +129,18 @@ model PdksKayit {
 }
 
 model Dilekce {
-  id         String   @id @default(uuid())
-  personelId String
-  tur        DilekceTuru
-  izinTuru   String?  // EGITIM_IZNI, IS_IZNI, ERKEN_CIKIS_IZNI
-  konu       String
-  icerik     String
-  onayDurumu OnayDurumu @default(BEKLIYOR)
-  tarih      DateTime   @default(now())
+  id          String      @id @default(uuid())
+  personelId  String
+  onaylayanId String?
+  tur         DilekceTuru
+  izinTuru    String?     // EGITIM_IZNI, IS_IZNI, ERKEN_CIKIS_IZNI
+  konu        String
+  icerik      String
+  onayDurumu  OnayDurumu  @default(BEKLIYOR)
+  tarih       DateTime    @default(now())
 
-  personel   Personel @relation(fields: [personelId], references: [id])
+  personel    Personel    @relation("PersonelDilekceleri", fields: [personelId], references: [id])
+  onaylayan   Personel?   @relation("OnaylananDilekceler", fields: [onaylayanId], references: [id])
 }
 
 model Tutanak {

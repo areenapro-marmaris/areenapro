@@ -465,7 +465,7 @@ export default function DilekcelerPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3 shrink-0 self-end md:self-center">
+                  <div className="flex flex-col items-end gap-1.5 shrink-0 self-end md:self-center">
                     {d.onayDurumu === "BEKLIYOR" && isManager ? (
                       <div className="flex gap-2">
                         <button 
@@ -482,7 +482,14 @@ export default function DilekcelerPage() {
                         </button>
                       </div>
                     ) : (
-                      getDilekceBadge(d.onayDurumu)
+                      <>
+                        {getDilekceBadge(d.onayDurumu)}
+                        {d.onaylayan && (
+                          <span className="text-[10px] text-slate-400 font-medium">
+                            İşlem Yapan: {d.onaylayan.adSoyad}
+                          </span>
+                        )}
+                      </>
                     )}
                   </div>
                 </div>
