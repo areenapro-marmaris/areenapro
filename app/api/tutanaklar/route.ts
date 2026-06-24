@@ -31,10 +31,10 @@ export async function GET(req: NextRequest) {
     const kisisel = searchParams.get('kisisel') === 'true';
 
     let tutanaklar;
-    const isManager = (user.rol === 'SUPER_ADMIN' || user.rol === 'YONETICI' || user.rol === 'INSAN_KAYNAKLARI') && !kisisel;
+    const isManager = user.rol === 'SUPER_ADMIN' && !kisisel;
 
     if (isManager) {
-      if (user.rol === 'SUPER_ADMIN' || user.rol === 'YONETICI' || user.rol === 'INSAN_KAYNAKLARI') {
+      if (user.rol === 'SUPER_ADMIN') {
         // Super Admins and Managers see all incidents
         tutanaklar = await prisma.tutanak.findMany({
           include: {
@@ -180,7 +180,7 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: 'Tutanak bulunamadı.' }, { status: 404 });
     }
 
-    const isManager = user.rol === 'SUPER_ADMIN' || user.rol === 'YONETICI' || user.rol === 'INSAN_KAYNAKLARI';
+    const isManager = user.rol === 'SUPER_ADMIN';
 
     // SCENARIO 1: Employee submitting defense
     if (savunma !== undefined && !isManager) {

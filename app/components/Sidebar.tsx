@@ -113,7 +113,7 @@ export default function Sidebar({
             </Link>
           );
 
-          const isManager = kullanici?.rol === 'SUPER_ADMIN' || kullanici?.rol === 'YONETICI' || kullanici?.rol === 'INSAN_KAYNAKLARI';
+          const isManager = kullanici?.rol === 'SUPER_ADMIN';
           if (item.href === '/dilekceler' && isManager) {
             return (
               <div key="dilekce-group" className="space-y-1">

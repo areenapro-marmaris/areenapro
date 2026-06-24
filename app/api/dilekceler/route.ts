@@ -30,10 +30,10 @@ export async function GET(req: NextRequest) {
     const kisisel = searchParams.get('kisisel') === 'true';
 
     let dilekceler;
-    const isManager = (user.rol === 'SUPER_ADMIN' || user.rol === 'YONETICI' || user.rol === 'INSAN_KAYNAKLARI') && !kisisel;
+    const isManager = user.rol === 'SUPER_ADMIN' && !kisisel;
 
     if (isManager) {
-      if (user.rol === 'SUPER_ADMIN' || user.rol === 'YONETICI' || user.rol === 'INSAN_KAYNAKLARI') {
+      if (user.rol === 'SUPER_ADMIN') {
         // Super Admins and Managers see all petitions
         dilekceler = await prisma.dilekce.findMany({
           include: {
@@ -120,8 +120,8 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   try {
     const user = await getAuthUser(req);
-    if (!user || (user.rol !== 'SUPER_ADMIN' && user.rol !== 'YONETICI' && user.rol !== 'INSAN_KAYNAKLARI')) {
-      return NextResponse.json({ error: 'Bu işlem için yönetici veya insan kaynakları yetkisi gereklidir.' }, { status: 403 });
+    if (!user || user.rol !== 'SUPER_ADMIN') {
+      return NextResponse.json({ error: 'Bu işlem için genel müdür yetkisi gereklidir.' }, { status: 403 });
     }
 
     const { id, onayDurumu } = await req.json();
