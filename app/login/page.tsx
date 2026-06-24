@@ -31,6 +31,10 @@ export default function LoginPage() {
         return;
       }
 
+      if (data.token) {
+        document.cookie = `areena_token=${data.token}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax; Secure`;
+      }
+
       window.location.href = "/";
     } catch {
       setError("Sunucuya bağlanılamadı.");
