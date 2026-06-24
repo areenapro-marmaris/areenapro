@@ -113,7 +113,7 @@ export default function Sidebar({
             </Link>
           );
 
-          const isManager = kullanici?.rol === 'SUPER_ADMIN' || kullanici?.rol === 'YONETICI';
+          const isManager = kullanici?.rol === 'SUPER_ADMIN' || kullanici?.rol === 'YONETICI' || kullanici?.rol === 'INSAN_KAYNAKLARI';
           if (item.href === '/dilekceler' && isManager) {
             return (
               <div key="dilekce-group" className="space-y-1">
@@ -124,7 +124,7 @@ export default function Sidebar({
                   className={`flex items-center space-x-3 pl-8 pr-3 py-2 rounded-lg transition-all group ${isYoneticiPath ? 'bg-indigo-500/20 text-indigo-400 font-bold border-l-2 border-indigo-500' : 'hover:bg-slate-800/80'}`}
                 >
                   <ShieldCheck className={`w-4 h-4 transition-colors ${isYoneticiPath ? 'text-indigo-400' : 'text-slate-400 group-hover:text-indigo-400'}`} />
-                  <span className={`text-sm font-medium transition-colors ${isYoneticiPath ? 'text-indigo-400' : 'group-hover:text-white'}`}>Tutanaklar Yönetici</span>
+                  <span className={`text-sm font-medium transition-colors ${isYoneticiPath ? 'text-indigo-400' : 'group-hover:text-white'}`}>Dilekçe & Tutanak Ynt.</span>
                 </Link>
               </div>
             );

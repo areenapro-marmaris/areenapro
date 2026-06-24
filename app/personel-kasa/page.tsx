@@ -3,11 +3,7 @@
 import { useState } from "react";
 import { Briefcase, CheckCircle, Clock, X, Plus, Trash2, AlertCircle } from "lucide-react";
 
-const initialTalepler = [
-  { id: "1", personel: "Murat Demir", tur: "AVANS", miktar: 3000, aciklama: "Kira ödemesi için avans talebi", durum: "BEKLIYOR", tarih: "2026-06-04", odendiMi: false },
-  { id: "2", personel: "Zeynep Çelik", tur: "CEZA", miktar: 500, aciklama: "İzinsiz geç giriş (3 tekrar)", durum: "ONAYLANDI", tarih: "2026-06-03", odendiMi: false },
-  { id: "3", personel: "Ali Şahin", tur: "AVANS", miktar: 1500, aciklama: "Acil sağlık masrafı", durum: "ONAYLANDI", tarih: "2026-06-02", odendiMi: true },
-];
+const initialTalepler: any[] = [];
 
 export default function PersonelKasaPage() {
   const currentUserRole = "YONETICI";

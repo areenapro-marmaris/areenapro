@@ -75,7 +75,7 @@ export default function DilekcelerYoneticiPage() {
     fetchData();
   }, []);
 
-  const isManager = currentUser?.rol === "SUPER_ADMIN" || currentUser?.rol === "YONETICI";
+  const isManager = currentUser?.rol === "SUPER_ADMIN" || currentUser?.rol === "YONETICI" || currentUser?.rol === "INSAN_KAYNAKLARI";
 
   // Dilekçe Onayla/Reddet
   const handleDilekceStatus = async (id: string, status: "ONAYLANDI" | "REDDEDILDI") => {
@@ -148,7 +148,7 @@ export default function DilekcelerYoneticiPage() {
     }
   };
 
-  if (currentUser && currentUser.rol !== "SUPER_ADMIN" && currentUser.rol !== "YONETICI") {
+  if (currentUser && currentUser.rol !== "SUPER_ADMIN" && currentUser.rol !== "YONETICI" && currentUser.rol !== "INSAN_KAYNAKLARI") {
     return (
       <div className="glass-panel p-12 text-center text-red-400 font-bold border border-red-500/20">
         Bu sayfaya erişim yetkiniz bulunmamaktadır.
