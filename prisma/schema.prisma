@@ -137,6 +137,7 @@ model Dilekce {
   konu        String
   icerik      String
   onayDurumu  OnayDurumu  @default(BEKLIYOR)
+  redNedeni   String?
   tarih       DateTime    @default(now())
 
   personel    Personel    @relation("PersonelDilekceleri", fields: [personelId], references: [id])

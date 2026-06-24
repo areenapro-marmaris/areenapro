@@ -30,6 +30,9 @@ export default function DilekcelerYoneticiPage() {
   const [isTutanakModalOpen, setIsTutanakModalOpen] = useState(false);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [selectedTutanak, setSelectedTutanak] = useState<any>(null);
+  const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
+  const [rejectingDilekceId, setRejectingDilekceId] = useState<string | null>(null);
+  const [redNedeniText, setRedNedeniText] = useState("");
 
   // Decision Form Inside Detail Modal
   const [decisionForm, setDecisionForm] = useState({
@@ -88,6 +91,29 @@ export default function DilekcelerYoneticiPage() {
       if (res.ok) fetchData();
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const handleRejectSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!rejectingDilekceId) return;
+    setLoading(true);
+    try {
+      const res = await fetch("/api/dilekceler", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: rejectingDilekceId, onayDurumu: "REDDEDILDI", redNedeni: redNedeniText })
+      });
+      if (res.ok) {
+        setIsRejectModalOpen(false);
+        setRejectingDilekceId(null);
+        setRedNedeniText("");
+        fetchData();
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -326,6 +352,47 @@ export default function DilekcelerYoneticiPage() {
         </div>
       )}
 
+      {/* Dilekçe Reddetme Modalı */}
+      {isRejectModalOpen && (
+        <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+          <div className="bg-slate-800 border border-slate-700 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
+            <div className="p-4 border-b border-slate-700 flex justify-between items-center">
+              <h3 className="text-xl font-bold text-white flex items-center gap-2"><X className="w-5 h-5 text-red-500" /> Dilekçe Red Nedeni</h3>
+              <button onClick={() => { setIsRejectModalOpen(false); setRejectingDilekceId(null); setRedNedeniText(""); }} className="text-slate-400 hover:text-white"><X className="w-6 h-6" /></button>
+            </div>
+            <form onSubmit={handleRejectSubmit} className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1">Reddedilme Gerekçesi / Neden *</label>
+                <textarea 
+                  required 
+                  rows={4} 
+                  value={redNedeniText} 
+                  onChange={(e) => setRedNedeniText(e.target.value)} 
+                  placeholder="Lütfen personelin talebinin neden reddedildiğini açıklayın..." 
+                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-red-500 resize-none text-sm leading-relaxed" 
+                />
+              </div>
+              <div className="flex justify-end gap-2">
+                <button 
+                  type="button" 
+                  onClick={() => { setIsRejectModalOpen(false); setRejectingDilekceId(null); setRedNedeniText(""); }} 
+                  className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg text-sm font-medium transition-colors"
+                >
+                  Vazgeç
+                </button>
+                <button 
+                  type="submit" 
+                  disabled={loading} 
+                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-bold transition-colors"
+                >
+                  {loading ? "Reddediliyor..." : "Talebi Reddet"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* Tutanak Tut Modal */}
       {isTutanakModalOpen && (
         <div className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
@@ -557,6 +624,11 @@ export default function DilekcelerYoneticiPage() {
                       </span>
                     </div>
                     <p className="text-sm text-slate-300 bg-slate-900/40 p-3 rounded border border-slate-700/50 leading-relaxed font-mono whitespace-pre-wrap">{d.icerik}</p>
+                    {d.onayDurumu === "REDDEDILDI" && d.redNedeni && (
+                      <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-2.5 rounded text-xs">
+                        <strong>Red Nedeni:</strong> {d.redNedeni}
+                      </div>
+                    )}
                     <div className="flex items-center gap-2 text-xs text-slate-400">
                       <span className="text-slate-300 font-bold">Personel: {d.personel?.adSoyad}</span>
                       <span>•</span>
@@ -568,7 +640,7 @@ export default function DilekcelerYoneticiPage() {
                     {d.onayDurumu === "BEKLIYOR" && isManager ? (
                       <div className="flex gap-2">
                         <button 
-                          onClick={() => handleDilekceStatus(d.id, "REDDEDILDI")}
+                          onClick={() => { setRejectingDilekceId(d.id); setIsRejectModalOpen(true); }}
                           className="px-3 py-1.5 rounded-lg border border-red-500/30 text-red-400 bg-red-500/5 hover:bg-red-500/20 transition-all font-semibold text-xs flex items-center gap-1"
                         >
                           <Ban className="w-3.5 h-3.5" /> Reddet

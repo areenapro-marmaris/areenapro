@@ -458,6 +458,11 @@ export default function DilekcelerPage() {
                       </span>
                     </div>
                     <p className="text-sm text-slate-300 bg-slate-900/40 p-3 rounded border border-slate-700/50 leading-relaxed font-mono whitespace-pre-wrap">{d.icerik}</p>
+                    {d.onayDurumu === "REDDEDILDI" && d.redNedeni && (
+                      <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-2.5 rounded text-xs">
+                        <strong>Red Nedeni:</strong> {d.redNedeni}
+                      </div>
+                    )}
                     <div className="flex items-center gap-2 text-xs text-slate-400">
                       <span className="text-slate-300 font-bold">{d.personel?.adSoyad}</span>
                       <span>•</span>

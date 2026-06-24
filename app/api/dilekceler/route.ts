@@ -133,7 +133,7 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: 'Bu işlem için genel müdür yetkisi gereklidir.' }, { status: 403 });
     }
 
-    const { id, onayDurumu } = await req.json();
+    const { id, onayDurumu, redNedeni } = await req.json();
     if (!id || !onayDurumu) {
       return NextResponse.json({ error: 'Dilekçe ID ve onay durumu zorunludur.' }, { status: 400 });
     }
@@ -144,7 +144,11 @@ export async function PUT(req: NextRequest) {
 
     const guncelDilekce = await prisma.dilekce.update({
       where: { id },
-      data: { onayDurumu, onaylayanId: user.id }
+      data: { 
+        onayDurumu, 
+        onaylayanId: user.id,
+        redNedeni: onayDurumu === 'REDDEDILDI' ? (redNedeni || null) : null
+      }
     });
 
     // Bildirim oluştur
@@ -152,7 +156,7 @@ export async function PUT(req: NextRequest) {
       data: {
         personelId: guncelDilekce.personelId,
         baslik: `Dilekçeniz ${onayDurumu === 'ONAYLANDI' ? 'Onaylandı' : 'Reddedildi'}`,
-        mesaj: `Konu: ${guncelDilekce.konu}`
+        mesaj: `Konu: ${guncelDilekce.konu}${onayDurumu === 'REDDEDILDI' && redNedeni ? `. Neden: ${redNedeni}` : ''}`
       }
     }).catch((err: any) => console.error("Bildirim oluşturulamadı:", err));
 
