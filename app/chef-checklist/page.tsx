@@ -621,11 +621,13 @@ export default function ChefChecklistPage() {
                 className="w-full bg-slate-950 border border-slate-850 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-500 text-sm"
               >
                 <option value="">Tüm Personel</option>
-                {personeller.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.adSoyad} {p.gorev ? `(${p.gorev})` : ""}
-                  </option>
-                ))}
+                {personeller
+                  .filter((p) => checklists.some((chk) => chk.personelId === p.id))
+                  .map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.adSoyad} {p.gorev ? `(${p.gorev})` : ""}
+                    </option>
+                  ))}
               </select>
             </div>
 
