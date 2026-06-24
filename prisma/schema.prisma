@@ -46,6 +46,7 @@ enum Role {
   MUHASEBE
   INSAN_KAYNAKLARI
   PERSONEL
+  SEF
 }
 
 model Birim {

@@ -23,6 +23,7 @@ const rolEtiket: Record<string, string> = {
   MUHASEBE: 'Muhasebe',
   INSAN_KAYNAKLARI: 'İnsan Kaynakları',
   PERSONEL: 'Genel',
+  SEF: 'Şef',
 };
 
 export default function Topbar({

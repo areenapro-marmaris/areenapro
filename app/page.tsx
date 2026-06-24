@@ -87,9 +87,9 @@ export default function Home() {
     }
   }, []);
 
-  // Fetch personal stats for PERSONEL role
+  // Fetch personal stats for PERSONEL / SEF role
   const fetchPersonalData = useCallback(async () => {
-    if (!currentUser || currentUser.rol !== 'PERSONEL') return;
+    if (!currentUser || (currentUser.rol !== 'PERSONEL' && currentUser.rol !== 'SEF')) return;
     setPersonalLoading(true);
     try {
       // Get current date formatted YYYY-MM
@@ -125,7 +125,7 @@ export default function Home() {
 
   useEffect(() => {
     if (currentUser) {
-      if (currentUser.rol === 'PERSONEL') {
+      if (currentUser.rol === 'PERSONEL' || currentUser.rol === 'SEF') {
         fetchPersonalData();
       } else {
         fetchData();
@@ -238,9 +238,9 @@ export default function Home() {
   }
 
   // ----------------------------------------------------
-  // PERSONEL HOME PAGE RENDERING
+  // PERSONEL & SEF HOME PAGE RENDERING
   // ----------------------------------------------------
-  if (currentUser?.rol === 'PERSONEL') {
+  if (currentUser?.rol === 'PERSONEL' || currentUser?.rol === 'SEF') {
     // Dilekçe Stats
     const totalDilekce = personalDilekceler.length;
     const pendingDilekce = personalDilekceler.filter(d => d.onayDurumu === 'BEKLIYOR').length;

@@ -6,7 +6,7 @@ import {
   Heart, FolderPlus, Key, Info, CreditCard, Calendar, UserX, UserCheck
 } from "lucide-react";
 
-const roller = ["PERSONEL", "INSAN_KAYNAKLARI", "VEZNE", "MUHASEBE", "YONETICI", "SUPER_ADMIN"];
+const roller = ["PERSONEL", "SEF", "INSAN_KAYNAKLARI", "VEZNE", "MUHASEBE", "YONETICI", "SUPER_ADMIN"];
 
 const rolEtiketleri: Record<string, string> = {
   SUPER_ADMIN: "Genel Müdür",
@@ -15,6 +15,7 @@ const rolEtiketleri: Record<string, string> = {
   MUHASEBE: "Muhasebe",
   INSAN_KAYNAKLARI: "İnsan Kaynakları",
   PERSONEL: "Genel",
+  SEF: "Şef",
 };
 
 const rolRenk: Record<string, string> = {
@@ -24,6 +25,7 @@ const rolRenk: Record<string, string> = {
   VEZNE: "bg-blue-500/10 text-blue-400 border-blue-500/20",
   INSAN_KAYNAKLARI: "bg-pink-500/10 text-pink-400 border-pink-500/20",
   PERSONEL: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+  SEF: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
 };
 
 export default function AyarlarPage() {

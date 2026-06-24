@@ -19,6 +19,7 @@ const ROLLER = [
   { value: 'MUHASEBE', label: 'Muhasebe', color: 'text-purple-400 bg-purple-500/10' },
   { value: 'INSAN_KAYNAKLARI', label: 'İnsan Kaynakları', color: 'text-pink-400 bg-pink-500/10' },
   { value: 'PERSONEL', label: 'Genel', color: 'text-slate-400 bg-slate-500/10' },
+  { value: 'SEF', label: 'Şef', color: 'text-indigo-400 bg-indigo-500/10' },
 ];
 
 export default function KullaniciYonetimiPage() {
