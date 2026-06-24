@@ -54,6 +54,10 @@ export default function ClientLayout({
 
     // Şef (SEF) yetkisi: Sadece Dilekçe/Tutanak, PDKS, Şef Checklist ve Ana Sayfa
     if (rol === 'SEF') {
+      if (pathname.startsWith('/chef-checklist/rapor')) {
+        router.push('/');
+        return;
+      }
       const allowedPaths = ['/dilekceler', '/pdks', '/login', '/', '/chef-checklist'];
       const isAllowed = allowedPaths.some(p => pathname === p || pathname.startsWith(p + '/'));
       if (!isAllowed) {

@@ -11,6 +11,7 @@ import {
   X,
   ShieldCheck,
   ClipboardList,
+  BarChart3,
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
@@ -169,6 +170,16 @@ export default function Sidebar({
               <ShieldCheck className={`w-5 h-5 transition-colors ${pathname.startsWith('/admin') ? 'text-amber-400' : 'text-slate-400 group-hover:text-amber-400'}`} />
               <span className={`font-medium transition-colors ${pathname.startsWith('/admin') ? 'text-amber-400' : 'group-hover:text-white'}`}>Kullanıcı Yönetimi</span>
             </Link>
+            {kullanici?.rol === 'SUPER_ADMIN' && (
+              <Link
+                href="/chef-checklist/rapor"
+                onClick={() => setIsOpen(false)}
+                className={`flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-all group ${pathname.startsWith('/chef-checklist/rapor') ? 'bg-amber-500/20 text-amber-400' : 'hover:bg-slate-800/80'}`}
+              >
+                <BarChart3 className={`w-5 h-5 transition-colors ${pathname.startsWith('/chef-checklist/rapor') ? 'text-amber-400' : 'text-slate-400 group-hover:text-amber-400'}`} />
+                <span className={`font-medium transition-colors ${pathname.startsWith('/chef-checklist/rapor') ? 'text-amber-400' : 'group-hover:text-white'}`}>Checklist Raporları</span>
+              </Link>
+            )}
           </>
         )}
       </div>
