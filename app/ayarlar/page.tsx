@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { 
   Users, Plus, X, Search, Edit2, Trash2, Shield, Building, 
-  Heart, FolderPlus, Key, Info, CreditCard, Calendar, UserX, UserCheck
+  Heart, FolderPlus, Key, Info, CreditCard, Calendar, UserX, UserCheck,
+  Eye, EyeOff
 } from "lucide-react";
 
 const roller = ["PERSONEL", "SEF", "INSAN_KAYNAKLARI", "VEZNE", "MUHASEBE", "YONETICI", "SUPER_ADMIN"];
@@ -45,6 +46,7 @@ export default function AyarlarPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [showPass, setShowPass] = useState(false);
   
   const [form, setForm] = useState({
     adSoyad: "",
@@ -115,6 +117,7 @@ export default function AyarlarPage() {
       aktif: true
     });
     setErrorMessage("");
+    setShowPass(false);
     setIsModalOpen(true);
   };
 
@@ -138,6 +141,7 @@ export default function AyarlarPage() {
       aktif: p.aktif
     });
     setErrorMessage("");
+    setShowPass(false);
     setIsModalOpen(true);
   };
 
@@ -282,11 +286,18 @@ export default function AyarlarPage() {
                     <Key className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
                     <input 
                       required={!editingId} 
-                      type="password" 
+                      type={showPass ? "text" : "password"} 
                       value={form.sifre} 
                       onChange={(e) => setForm({ ...form, sifre: e.target.value })} 
-                      className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-10 pr-4 py-2 text-white focus:outline-none focus:border-blue-500" 
+                      className="w-full bg-slate-900 border border-slate-700 rounded-lg pl-10 pr-10 py-2 text-white focus:outline-none focus:border-blue-500" 
                     />
+                    <button 
+                      type="button" 
+                      onClick={() => setShowPass(!showPass)} 
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors"
+                    >
+                      {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
                   </div>
                 </div>
 
