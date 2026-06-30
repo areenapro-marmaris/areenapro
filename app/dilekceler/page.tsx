@@ -229,6 +229,7 @@ export default function DilekcelerPage() {
       if (sub === 'ERKEN_CIKIS_IZNI') return 'Erken Çıkış İzni';
       if (sub === 'EGITIM_IZNI') return 'Eğitim İzni';
       if (sub === 'IS_IZNI') return 'İş İzni';
+      if (sub === 'GEC_KALMA_IZNI') return 'Geç Kalma İzni';
       return 'İzin';
     }
     if (tur === 'AVANS_TALEBI') return 'Avans Talebi';
@@ -264,6 +265,7 @@ export default function DilekcelerPage() {
                       <option value="EGITIM_IZNI">Eğitim İzni</option>
                       <option value="IS_IZNI">İş İzni</option>
                       <option value="ERKEN_CIKIS_IZNI">Erken Çıkış İzni</option>
+                      <option value="GEC_KALMA_IZNI">Geç Kalma İzni</option>
                     </select>
                   </div>
                 )}

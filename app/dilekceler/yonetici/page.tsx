@@ -243,6 +243,7 @@ export default function DilekcelerYoneticiPage() {
       if (sub === 'ERKEN_CIKIS_IZNI') return 'Erken Çıkış İzni';
       if (sub === 'EGITIM_IZNI') return 'Eğitim İzni';
       if (sub === 'IS_IZNI') return 'İş İzni';
+      if (sub === 'GEC_KALMA_IZNI') return 'Geç Kalma İzni';
       return 'İzin';
     }
     if (tur === 'AVANS_TALEBI') return 'Avans Talebi';

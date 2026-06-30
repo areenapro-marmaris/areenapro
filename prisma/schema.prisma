@@ -136,7 +136,7 @@ model Dilekce {
   personelId  String
   onaylayanId String?
   tur         DilekceTuru
-  izinTuru    String?     // EGITIM_IZNI, IS_IZNI, ERKEN_CIKIS_IZNI
+  izinTuru    String?     // EGITIM_IZNI, IS_IZNI, ERKEN_CIKIS_IZNI, GEC_KALMA_IZNI
   konu        String
   icerik      String
   onayDurumu  OnayDurumu  @default(BEKLIYOR)
