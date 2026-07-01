@@ -366,6 +366,8 @@ export default function DilekcelerPage() {
                     <option value="UYARI">Uyarı</option>
                     <option value="PARA_CEZASI">Para Cezası</option>
                     <option value="UZAKLASTIRMA">Uzaklaştırma</option>
+                    <option value="TEMIZLIK_NOBETI">Temizlik Nöbeti</option>
+                    <option value="IS_CIKISI">İş Çıkışı</option>
                   </select>
                 </div>
                 {decisionForm.kararTuru === "PARA_CEZASI" && (
@@ -567,7 +569,7 @@ export default function DilekcelerPage() {
                       <div className="bg-emerald-950/20 p-3 rounded border border-emerald-900/20 text-sm space-y-1">
                         <div className="text-emerald-400 font-bold">Yönetici Kararı:</div>
                         <div className="text-emerald-300 font-mono">
-                          Yaptırım: {t.kararTuru === 'UYARI' ? 'Yazılı Uyarı' : t.kararTuru === 'PARA_CEZASI' ? `Para Cezası (₺${t.cezaTutari?.toLocaleString('tr-TR')})` : 'Uzaklaştırma'}
+                          Yaptırım: {t.kararTuru === 'UYARI' ? 'Yazılı Uyarı' : t.kararTuru === 'PARA_CEZASI' ? `Para Cezası (₺${t.cezaTutari?.toLocaleString('tr-TR')})` : t.kararTuru === 'TEMIZLIK_NOBETI' ? 'Temizlik Nöbeti' : t.kararTuru === 'IS_CIKISI' ? 'İş Çıkışı' : 'Uzaklaştırma'}
                         </div>
                         {t.kararNotu && (
                           <div className="text-slate-300 text-xs mt-1 italic">

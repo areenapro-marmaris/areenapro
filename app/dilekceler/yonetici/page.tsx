@@ -320,6 +320,8 @@ export default function DilekcelerYoneticiPage() {
                         <option value="UYARI">Uyarı</option>
                         <option value="PARA_CEZASI">Para Cezası</option>
                         <option value="UZAKLASTIRMA">Uzaklaştırma</option>
+                        <option value="TEMIZLIK_NOBETI">Temizlik Nöbeti</option>
+                        <option value="IS_CIKISI">İş Çıkışı</option>
                       </select>
                     </div>
                     {decisionForm.kararTuru === "PARA_CEZASI" && (
@@ -343,7 +345,7 @@ export default function DilekcelerYoneticiPage() {
               {selectedTutanak.durum === 'KARAR_VERILDI' && (
                 <div className="bg-emerald-950/20 p-4 rounded-lg border border-emerald-900/30 text-sm space-y-2">
                   <div className="text-emerald-400 font-bold">Verilen Karar & Yaptırım</div>
-                  <div><span className="font-semibold text-slate-300">Yaptırım:</span> {selectedTutanak.kararTuru === 'UYARI' ? 'Yazılı Uyarı' : selectedTutanak.kararTuru === 'PARA_CEZASI' ? `Para Cezası (₺${selectedTutanak.cezaTutari})` : 'Uzaklaştırma'}</div>
+                  <div><span className="font-semibold text-slate-300">Yaptırım:</span> {selectedTutanak.kararTuru === 'UYARI' ? 'Yazılı Uyarı' : selectedTutanak.kararTuru === 'PARA_CEZASI' ? `Para Cezası (₺${selectedTutanak.cezaTutari})` : selectedTutanak.kararTuru === 'TEMIZLIK_NOBETI' ? 'Temizlik Nöbeti' : selectedTutanak.kararTuru === 'IS_CIKISI' ? 'İş Çıkışı' : 'Uzaklaştırma'}</div>
                   {selectedTutanak.kararNotu && <div><span className="font-semibold text-slate-300">Karar Açıklaması:</span> {selectedTutanak.kararNotu}</div>}
                   <div><span className="font-semibold text-slate-300">Karar Tarihi:</span> {new Date(selectedTutanak.kararTarihi).toLocaleString('tr-TR')}</div>
                 </div>
@@ -567,7 +569,7 @@ export default function DilekcelerYoneticiPage() {
                         </td>
                         <td className="px-4 py-3 text-slate-300">
                           {t.durum === 'KARAR_VERILDI' ? (
-                            t.kararTuru === 'UYARI' ? 'Yazılı Uyarı' : t.kararTuru === 'PARA_CEZASI' ? 'Para Cezası' : 'Uzaklaştırma'
+                            t.kararTuru === 'UYARI' ? 'Yazılı Uyarı' : t.kararTuru === 'PARA_CEZASI' ? 'Para Cezası' : t.kararTuru === 'TEMIZLIK_NOBETI' ? 'Temizlik Nöbeti' : t.kararTuru === 'IS_CIKISI' ? 'İş Çıkışı' : 'Uzaklaştırma'
                           ) : '-'}
                         </td>
                         <td className="px-4 py-3 text-right font-mono font-bold text-slate-200">

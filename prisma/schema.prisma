@@ -176,6 +176,8 @@ enum KararTuru {
   UYARI
   PARA_CEZASI
   UZAKLASTIRMA
+  TEMIZLIK_NOBETI
+  IS_CIKISI
 }
 
 enum DilekceTuru {
