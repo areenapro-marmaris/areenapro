@@ -102,7 +102,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Oturum açılması gereklidir.' }, { status: 401 });
     }
 
-    const { tur, izinTuru, konu, icerik } = await req.json();
+    const { tur, izinTuru, miktar, konu, icerik } = await req.json();
     if (!tur || !konu || !icerik) {
       return NextResponse.json({ error: 'Dilekçe türü, konu ve içerik zorunludur.' }, { status: 400 });
     }
@@ -112,6 +112,7 @@ export async function POST(req: NextRequest) {
         personelId: user.id,
         tur,
         izinTuru: tur === 'IZIN' ? izinTuru : null,
+        miktar: tur === 'AVANS_TALEBI' && miktar ? parseFloat(miktar) : null,
         konu,
         icerik,
         onayDurumu: 'BEKLIYOR'

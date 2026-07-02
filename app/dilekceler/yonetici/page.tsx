@@ -621,10 +621,16 @@ export default function DilekcelerYoneticiPage() {
                 <div key={d.id} className="glass-panel p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 flex-wrap">
+                      <span className="font-bold text-sky-400 text-base">[{d.personel?.adSoyad}]</span>
                       <span className="font-semibold text-white text-base">{d.konu}</span>
                       <span className="text-xs px-2 py-0.5 rounded border border-blue-500/20 bg-blue-500/10 text-blue-400 font-semibold">
                         {getDilekceTur(d.tur, d.izinTuru)}
                       </span>
+                      {d.tur === 'AVANS_TALEBI' && d.miktar && (
+                        <span className="text-xs px-2.5 py-0.5 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-400 font-bold">
+                          Talep Edilen Avans: ₺{d.miktar.toLocaleString('tr-TR')}
+                        </span>
+                      )}
                     </div>
                     <p className="text-sm text-slate-300 bg-slate-900/40 p-3 rounded border border-slate-700/50 leading-relaxed font-mono whitespace-pre-wrap">{d.icerik}</p>
                     {d.onayDurumu === "REDDEDILDI" && d.redNedeni && (

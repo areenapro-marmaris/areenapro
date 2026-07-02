@@ -31,6 +31,7 @@ export default function DilekcelerPage() {
   const [dilekceForm, setDilekceForm] = useState({
     tur: "IZIN",
     izinTuru: "EGITIM_IZNI",
+    miktar: "",
     konu: "",
     icerik: ""
   });
@@ -94,7 +95,7 @@ export default function DilekcelerPage() {
       });
       if (res.ok) {
         setIsDilekceModalOpen(false);
-        setDilekceForm({ tur: "IZIN", izinTuru: "EGITIM_IZNI", konu: "", icerik: "" });
+        setDilekceForm({ tur: "IZIN", izinTuru: "EGITIM_IZNI", miktar: "", konu: "", icerik: "" });
         fetchData();
       } else {
         const err = await res.json();
@@ -267,6 +268,12 @@ export default function DilekcelerPage() {
                       <option value="ERKEN_CIKIS_IZNI">Erken Çıkış İzni</option>
                       <option value="GEC_KALMA_IZNI">Geç Kalma İzni</option>
                     </select>
+                  </div>
+                )}
+                {dilekceForm.tur === "AVANS_TALEBI" && (
+                  <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-1">Talep Edilen Tutar (₺) *</label>
+                    <input required type="number" min="1" step="any" value={dilekceForm.miktar} onChange={(e) => setDilekceForm({ ...dilekceForm, miktar: e.target.value })} placeholder="Talep ettiğiniz tutar" className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" />
                   </div>
                 )}
               </div>
@@ -460,6 +467,11 @@ export default function DilekcelerPage() {
                       <span className="text-xs px-2 py-0.5 rounded border border-blue-500/20 bg-blue-500/10 text-blue-400 font-semibold">
                         {getDilekceTur(d.tur, d.izinTuru)}
                       </span>
+                      {d.tur === 'AVANS_TALEBI' && d.miktar && (
+                        <span className="text-xs px-2.5 py-0.5 rounded-full border border-amber-500/30 bg-amber-500/10 text-amber-400 font-bold">
+                          Talep Edilen Avans: ₺{d.miktar.toLocaleString('tr-TR')}
+                        </span>
+                      )}
                     </div>
                     <p className="text-sm text-slate-300 bg-slate-900/40 p-3 rounded border border-slate-700/50 leading-relaxed font-mono whitespace-pre-wrap">{d.icerik}</p>
                     {d.onayDurumu === "REDDEDILDI" && d.redNedeni && (

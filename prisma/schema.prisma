@@ -137,6 +137,7 @@ model Dilekce {
   onaylayanId String?
   tur         DilekceTuru
   izinTuru    String?     // EGITIM_IZNI, IS_IZNI, ERKEN_CIKIS_IZNI, GEC_KALMA_IZNI
+  miktar      Float?
   konu        String
   icerik      String
   onayDurumu  OnayDurumu  @default(BEKLIYOR)
