@@ -556,7 +556,7 @@ export default function DilekcelerYoneticiPage() {
                         <td className="px-4 py-3 text-slate-300">{t.ilgili?.birim?.ad || "AREENA"}</td>
                         <td className="px-4 py-3 text-slate-400 font-mono text-xs">{new Date(t.tarih).toLocaleDateString('tr-TR')} {new Date(t.tarih).toLocaleTimeString('tr-TR', {hour: '2-digit', minute:'2-digit'})}</td>
                         <td className="px-4 py-3 text-slate-200 font-medium">{t.ekleyen?.adSoyad}</td>
-                        <td className="px-4 py-3 text-slate-300">{t.konu}</td>
+                        <td className="px-4 py-3 text-slate-300 truncate max-w-[180px]" title={t.konu}>{t.konu}</td>
                         <td className="px-4 py-3 text-slate-200 font-medium">{t.ilgili?.adSoyad}</td>
                         <td className="px-4 py-3 text-slate-400 text-xs truncate max-w-[200px]" title={t.icerik}>{t.icerik}</td>
                         <td className="px-4 py-3 text-center">
