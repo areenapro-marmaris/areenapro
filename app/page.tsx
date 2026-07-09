@@ -489,47 +489,45 @@ export default function Home() {
       </div>
 
       {/* Dünkü ve Geçen Haftaki Ciro Karşılaştırma Uyarısı */}
-      {!loading && (dunkuSatis > 0 || gecenHaftaSatis > 0) && (
-        <div className="bg-slate-900 border border-slate-700/50 rounded-xl p-4 space-y-3.5 shadow-lg">
-          {/* Üst Satır: Dünkü Ciro Karşılaştırması */}
-          {dunkuSatis > 0 && (() => {
-            const fark = toplamSatis - dunkuSatis;
-            return (
-              <div className="flex items-center gap-3 text-sm">
-                <span className="relative flex h-3 w-3 shrink-0">
-                  <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${fark < 0 ? 'bg-red-400' : 'bg-emerald-400'}`}></span>
-                  <span className={`relative inline-flex rounded-full h-3 w-3 ${fark < 0 ? 'bg-red-500 animate-pulse' : 'bg-emerald-500'}`}></span>
-                </span>
-                <div className={`font-semibold ${fark < 0 ? 'text-red-400' : 'text-emerald-400'}`}>
-                  Dünkü Ciro Karşılaştırması: Şu an dünkü ciroya ({`₺${dunkuSatis.toLocaleString('tr-TR')}`}) göre{' '}
-                  <span className={`font-bold px-2 py-0.5 rounded border ${fark < 0 ? 'bg-red-500/10 border-red-500/20 text-red-400' : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'}`}>
-                    ₺{Math.abs(fark).toLocaleString('tr-TR')} {fark < 0 ? 'geridesiniz' : 'öndesiniz'}
+      {!loading && (dunkuSatis > 0 || gecenHaftaSatis > 0) && (() => {
+        const gunler = ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"];
+        const gunAdi = data?.tarih ? gunler[new Date(data.tarih).getDay()] : "Perşembe";
+        return (
+          <div className="bg-slate-900 border border-slate-700/50 rounded-xl p-4 space-y-3 shadow-lg">
+            {/* Üst Satır: Dünkü Ciro Karşılaştırması */}
+            {dunkuSatis > 0 && (() => {
+              const fark = toplamSatis - dunkuSatis;
+              return (
+                <div className="flex items-center gap-3 text-sm">
+                  <span className="relative flex h-3 w-3 shrink-0">
+                    <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${fark < 0 ? 'bg-red-400' : 'bg-emerald-400'}`}></span>
+                    <span className={`relative inline-flex rounded-full h-3 w-3 ${fark < 0 ? 'bg-red-500 animate-pulse' : 'bg-emerald-500'}`}></span>
                   </span>
+                  <div className={`font-semibold ${fark < 0 ? 'text-red-400' : 'text-emerald-400'}`}>
+                    Dünkü ciroya göre <span className="text-white font-bold bg-slate-800 px-2 py-0.5 rounded border border-slate-700">₺{Math.abs(fark).toLocaleString('tr-TR')}</span> {fark < 0 ? 'geridesiniz' : 'öndesiniz'}
+                  </div>
                 </div>
-              </div>
-            );
-          })()}
+              );
+            })()}
 
-          {/* Alt Satır: Geçen Haftaki Ciro Karşılaştırması */}
-          {gecenHaftaSatis > 0 && (() => {
-            const farkHaftalik = toplamSatis - gecenHaftaSatis;
-            return (
-              <div className="flex items-center gap-3 text-sm pt-3 border-t border-slate-800">
-                <span className="relative flex h-3 w-3 shrink-0">
-                  <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${farkHaftalik < 0 ? 'bg-red-400' : 'bg-emerald-400'}`}></span>
-                  <span className={`relative inline-flex rounded-full h-3 w-3 ${farkHaftalik < 0 ? 'bg-red-500 animate-pulse' : 'bg-emerald-500'}`}></span>
-                </span>
-                <div className={`font-semibold ${farkHaftalik < 0 ? 'text-red-400' : 'text-emerald-400'}`}>
-                  Geçen Haftaki Ciro Karşılaştırması (Aynı Gün): Şu an geçen haftaki ciroya ({`₺${gecenHaftaSatis.toLocaleString('tr-TR')}`}) göre{' '}
-                  <span className={`font-bold px-2 py-0.5 rounded border ${farkHaftalik < 0 ? 'bg-red-500/10 border-red-500/20 text-red-400' : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'}`}>
-                    ₺{Math.abs(farkHaftalik).toLocaleString('tr-TR')} {farkHaftalik < 0 ? 'geridesiniz' : 'öndesiniz'}
+            {/* Alt Satır: Geçen Haftaki Ciro Karşılaştırması */}
+            {gecenHaftaSatis > 0 && (() => {
+              const farkHaftalik = toplamSatis - gecenHaftaSatis;
+              return (
+                <div className="flex items-center gap-3 text-sm pt-3 border-t border-slate-800">
+                  <span className="relative flex h-3 w-3 shrink-0">
+                    <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${farkHaftalik < 0 ? 'bg-red-400' : 'bg-emerald-400'}`}></span>
+                    <span className={`relative inline-flex rounded-full h-3 w-3 ${farkHaftalik < 0 ? 'bg-red-500 animate-pulse' : 'bg-emerald-500'}`}></span>
                   </span>
+                  <div className={`font-semibold ${farkHaftalik < 0 ? 'text-red-400' : 'text-emerald-400'}`}>
+                    Geçen hafta {gunAdi} cirosuna göre <span className="text-white font-bold bg-slate-800 px-2 py-0.5 rounded border border-slate-700">₺{Math.abs(farkHaftalik).toLocaleString('tr-TR')}</span> {farkHaftalik < 0 ? 'geridesiniz' : 'öndesiniz'}
+                  </div>
                 </div>
-              </div>
-            );
-          })()}
-        </div>
-      )}
+              );
+            })()}
+          </div>
+        );
+      })()}
 
       {/* 4 Stat Kart */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
