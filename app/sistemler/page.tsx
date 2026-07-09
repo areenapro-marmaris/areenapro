@@ -198,7 +198,7 @@ export default function SistemlerPage() {
               <tr>
                 <th className="px-6 py-4 font-semibold">Sıra</th>
                 <th className="px-6 py-4 font-semibold">Personel</th>
-                <th className="px-6 py-4 font-semibold text-center">Masa</th>
+                <th className="px-6 py-4 font-semibold text-center">Ürün Adeti</th>
                 <th className="px-6 py-4 font-semibold text-right">Satış Tutarı</th>
                 <th className="px-6 py-4 font-semibold text-right">Pay %</th>
               </tr>

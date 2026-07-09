@@ -523,7 +523,7 @@ export default function Home() {
                 <tr>
                   <th className="px-5 py-3 font-medium">#</th>
                   <th className="px-5 py-3 font-medium">Personel</th>
-                  <th className="px-5 py-3 font-medium text-center">Masa</th>
+                  <th className="px-5 py-3 font-medium text-center">Ürün Adeti</th>
                   <th className="px-5 py-3 font-medium text-right">Satış</th>
                   <th className="px-5 py-3 font-medium text-right">Pay</th>
                 </tr>
