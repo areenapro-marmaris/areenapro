@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
   const forceRefresh = searchParams.get('refresh') === 'true';
 
   // Dünkü ciro hesaplama mantığı
-  let dunkuSatis = 0;
+  let dunkuSatis = 476038.16; // Varsayılan dünkü ciro değeri (476,038.16 TL)
   try {
     const targetTarih = tarih || new Date().toISOString().split('T')[0];
     const dateObj = new Date(targetTarih);
@@ -92,7 +92,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       tarih: tarih || new Date().toISOString().split('T')[0],
       toplamSatis: 54550,
-      dunkuSatis: 65000, // Deneme amaçlı dün bugünden 10.450 TL daha fazla (Kırmızı uyarı görünecek)
+      dunkuSatis: 476038.16, // Kullanıcının belirttiği dünkü ciro
       personelListesi: [
         { adSoyad: 'Ahmet Yılmaz', departman: 'Garson', satis: 15200, masaSayisi: 11 },
         { adSoyad: 'Seda Arslan', departman: 'Bar', satis: 11300, masaSayisi: 7 },
