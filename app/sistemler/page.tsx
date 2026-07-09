@@ -13,6 +13,7 @@ interface PersonelSatis {
 interface RaporData {
   tarih: string;
   toplamSatis: number;
+  dunkuSatis?: number;
   personelListesi: PersonelSatis[];
   sonGuncelleme: string;
   source: 'elektraweb' | 'mock' | 'cache';
@@ -80,6 +81,7 @@ export default function SistemlerPage() {
   }, [fetchData]);
 
   const toplamSatis = data?.toplamSatis || 0;
+  const dunkuSatis = data?.dunkuSatis || 0;
   const personeller = data?.personelListesi || [];
   const isMock = data?.source === 'mock';
 
@@ -140,6 +142,37 @@ export default function SistemlerPage() {
           <p className="mt-1 text-red-400/70">{error}</p>
         </div>
       )}
+
+      {/* Dünkü Ciro Karşılaştırma Uyarısı */}
+      {!loading && dunkuSatis > 0 && (() => {
+        const fark = toplamSatis - dunkuSatis;
+        if (fark < 0) {
+          return (
+            <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 text-red-400 text-sm flex items-center gap-3 animate-pulse shadow-lg">
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+              </span>
+              <div className="font-semibold">
+                Dünkü ciroya göre şu an <span className="text-white font-bold bg-red-500/20 px-2 py-0.5 rounded border border-red-500/30">₺{Math.abs(fark).toLocaleString('tr-TR')}</span> geridesiniz.
+              </div>
+            </div>
+          );
+        } else if (fark > 0) {
+          return (
+            <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4 text-emerald-400 text-sm flex items-center gap-3 shadow-lg">
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+              </span>
+              <div className="font-semibold">
+                Dünkü ciroya göre şu an <span className="text-white font-bold bg-emerald-500/20 px-2 py-0.5 rounded border border-emerald-500/30">₺{fark.toLocaleString('tr-TR')}</span> daha ileridesiniz.
+              </div>
+            </div>
+          );
+        }
+        return null;
+      })()}
 
       {/* Özet Kartlar */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

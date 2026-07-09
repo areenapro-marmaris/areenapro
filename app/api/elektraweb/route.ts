@@ -24,13 +24,32 @@ export async function GET(req: NextRequest) {
   const tarih = searchParams.get('tarih') || undefined;
   const forceRefresh = searchParams.get('refresh') === 'true';
 
+  // Dünkü ciro hesaplama mantığı
+  let dunkuSatis = 0;
+  try {
+    const targetTarih = tarih || new Date().toISOString().split('T')[0];
+    const dateObj = new Date(targetTarih);
+    dateObj.setDate(dateObj.getDate() - 1);
+    const yesterdayTarih = dateObj.toISOString().split('T')[0];
+    
+    const dunkuRecord = await prisma.elektraSatis.findUnique({
+      where: { tarih: yesterdayTarih }
+    });
+    if (dunkuRecord) {
+      dunkuSatis = dunkuRecord.toplamSatis;
+    }
+  } catch (err) {
+    console.error('Dünkü satış verisi hesaplanırken hata:', err);
+  }
+
   // Eğer cache geçerliyse ve zorla yenileme istenmiyorsa cache'den döndür
   const now = Date.now();
   if (!forceRefresh && cachedData && (now - cacheTime) < CACHE_TTL) {
     return NextResponse.json({ 
       ...cachedData, 
       source: 'cache',
-      cacheAge: Math.round((now - cacheTime) / 1000) + ' saniye önce güncellendi'
+      cacheAge: Math.round((now - cacheTime) / 1000) + ' saniye önce güncellendi',
+      dunkuSatis
     });
   }
 
@@ -63,7 +82,7 @@ export async function GET(req: NextRequest) {
         // Sunucu belleğine cache'le
         cachedData = payload;
         cacheTime = Date.now();
-        return NextResponse.json(payload);
+        return NextResponse.json({ ...payload, dunkuSatis });
       }
     } catch (dbError) {
       console.error('Veritabanından Elektra verisi okunurken hata:', dbError);
@@ -73,6 +92,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       tarih: tarih || new Date().toISOString().split('T')[0],
       toplamSatis: 54550,
+      dunkuSatis: 65000, // Deneme amaçlı dün bugünden 10.450 TL daha fazla (Kırmızı uyarı görünecek)
       personelListesi: [
         { adSoyad: 'Ahmet Yılmaz', departman: 'Garson', satis: 15200, masaSayisi: 11 },
         { adSoyad: 'Seda Arslan', departman: 'Bar', satis: 11300, masaSayisi: 7 },
@@ -116,7 +136,7 @@ export async function GET(req: NextRequest) {
     cachedData = data;
     cacheTime = Date.now();
     
-    return NextResponse.json({ ...data, source: 'elektraweb' });
+    return NextResponse.json({ ...data, source: 'elektraweb', dunkuSatis });
   } catch (error) {
     return NextResponse.json(
       { error: 'ElektraWeb verisi çekilemedi.', detay: (error as Error).message },
