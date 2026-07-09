@@ -24,10 +24,13 @@ export async function GET(req: NextRequest) {
   const tarih = searchParams.get('tarih') || undefined;
   const forceRefresh = searchParams.get('refresh') === 'true';
 
-  // Dünkü ciro hesaplama mantığı
-  let dunkuSatis = 476038.16; // Varsayılan dünkü ciro değeri (476,038.16 TL)
+  // Ciro hesaplama mantığı
+  let dunkuSatis = 0;
+  let gecenHaftaSatis = 0;
   try {
     const targetTarih = tarih || new Date().toISOString().split('T')[0];
+    
+    // Dünkü ciro (1 gün önce)
     const dateObj = new Date(targetTarih);
     dateObj.setDate(dateObj.getDate() - 1);
     const yesterdayTarih = dateObj.toISOString().split('T')[0];
@@ -37,9 +40,25 @@ export async function GET(req: NextRequest) {
     });
     if (dunkuRecord) {
       dunkuSatis = dunkuRecord.toplamSatis;
+    } else if (yesterdayTarih === '2026-07-09') {
+      dunkuSatis = 476038.16; // Sadece dün için spesifik fallback
+    }
+
+    // Geçen haftaki ciro (7 gün önce)
+    const dateWeekObj = new Date(targetTarih);
+    dateWeekObj.setDate(dateWeekObj.getDate() - 7);
+    const lastWeekTarih = dateWeekObj.toISOString().split('T')[0];
+
+    const lastWeekRecord = await prisma.elektraSatis.findUnique({
+      where: { tarih: lastWeekTarih }
+    });
+    if (lastWeekRecord) {
+      gecenHaftaSatis = lastWeekRecord.toplamSatis;
+    } else if (lastWeekTarih === '2026-07-02') {
+      gecenHaftaSatis = 282825.34; // Sadece geçen hafta perşembe için spesifik fallback
     }
   } catch (err) {
-    console.error('Dünkü satış verisi hesaplanırken hata:', err);
+    console.error('Satış karşılaştırma verisi hesaplanırken hata:', err);
   }
 
   // Eğer cache geçerliyse ve zorla yenileme istenmiyorsa cache'den döndür
@@ -49,7 +68,8 @@ export async function GET(req: NextRequest) {
       ...cachedData, 
       source: 'cache',
       cacheAge: Math.round((now - cacheTime) / 1000) + ' saniye önce güncellendi',
-      dunkuSatis
+      dunkuSatis,
+      gecenHaftaSatis
     });
   }
 
@@ -82,7 +102,7 @@ export async function GET(req: NextRequest) {
         // Sunucu belleğine cache'le
         cachedData = payload;
         cacheTime = Date.now();
-        return NextResponse.json({ ...payload, dunkuSatis });
+        return NextResponse.json({ ...payload, dunkuSatis, gecenHaftaSatis });
       }
     } catch (dbError) {
       console.error('Veritabanından Elektra verisi okunurken hata:', dbError);
@@ -92,7 +112,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({
       tarih: tarih || new Date().toISOString().split('T')[0],
       toplamSatis: 54550,
-      dunkuSatis: 476038.16, // Kullanıcının belirttiği dünkü ciro
+      dunkuSatis: 476038.16,
+      gecenHaftaSatis: 282825.34,
       personelListesi: [
         { adSoyad: 'Ahmet Yılmaz', departman: 'Garson', satis: 15200, masaSayisi: 11 },
         { adSoyad: 'Seda Arslan', departman: 'Bar', satis: 11300, masaSayisi: 7 },
