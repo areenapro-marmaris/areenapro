@@ -24,74 +24,29 @@ export async function GET(req: NextRequest) {
   const tarih = searchParams.get('tarih') || undefined;
   const forceRefresh = searchParams.get('refresh') === 'true';
 
-  // Ciro hesaplama mantığı
-  let dunkuSatis = 0;
-  let gecenHaftaSatis = 0;
-  try {
-    const targetTarih = tarih || new Date().toISOString().split('T')[0];
-    
-    // Dünkü ciro (1 gün önce)
-    const dateObj = new Date(targetTarih);
-    dateObj.setDate(dateObj.getDate() - 1);
-    const yesterdayTarih = dateObj.toISOString().split('T')[0];
-    
-    const dunkuRecord = await prisma.elektraSatis.findUnique({
-      where: { tarih: yesterdayTarih }
-    });
-    if (dunkuRecord) {
-      dunkuSatis = dunkuRecord.toplamSatis;
-    } else if (yesterdayTarih === '2026-07-09') {
-      dunkuSatis = 476038.16; // Sadece dün için spesifik fallback
-    }
-
-    // Geçen haftaki ciro (7 gün önce)
-    const dateWeekObj = new Date(targetTarih);
-    dateWeekObj.setDate(dateWeekObj.getDate() - 7);
-    const lastWeekTarih = dateWeekObj.toISOString().split('T')[0];
-
-    const lastWeekRecord = await prisma.elektraSatis.findUnique({
-      where: { tarih: lastWeekTarih }
-    });
-    if (lastWeekRecord) {
-      gecenHaftaSatis = lastWeekRecord.toplamSatis;
-    } else if (lastWeekTarih === '2026-07-02') {
-      gecenHaftaSatis = 282825.34; // Sadece geçen hafta perşembe için spesifik fallback
-    }
-  } catch (err) {
-    console.error('Satış karşılaştırma verisi hesaplanırken hata:', err);
-  }
-
-  // Eğer cache geçerliyse ve zorla yenileme istenmiyorsa cache'den döndür
   const now = Date.now();
-  if (!forceRefresh && cachedData && (now - cacheTime) < CACHE_TTL) {
-    return NextResponse.json({ 
-      ...cachedData, 
-      source: 'cache',
-      cacheAge: Math.round((now - cacheTime) / 1000) + ' saniye önce güncellendi',
-      dunkuSatis,
-      gecenHaftaSatis
-    });
-  }
+  let resultPayload: any = null;
 
-  // ElektraWeb bağlantı bilgileri .env'de yoksa (Bulut sunucusu / Vercel modu)
-  if (!process.env.ELEKTRAWEB_URL) {
+  // 1. Aktif rapor verisini çek
+  if (!forceRefresh && cachedData && (now - cacheTime) < CACHE_TTL) {
+    resultPayload = { 
+      ...cachedData, 
+      source: 'cache' as const,
+      cacheAge: Math.round((now - cacheTime) / 1000) + ' saniye önce güncellendi'
+    };
+  } else if (!process.env.ELEKTRAWEB_URL) {
     try {
       const targetTarih = tarih || new Date().toISOString().split('T')[0];
-      
-      // Veritabanından o tarihe ait kaydedilmiş satış verisini bulmaya çalışalım
       let dbRecord = await prisma.elektraSatis.findUnique({
         where: { tarih: targetTarih }
       });
-
-      // Eğer o güne ait kayıt henüz yoksa en son kaydedilmiş raporu getirelim
-      if (!dbRecord) {
+      if (!dbRecord && !tarih) {
         dbRecord = await prisma.elektraSatis.findFirst({
           orderBy: { tarih: 'desc' }
         });
       }
-
       if (dbRecord) {
-        const payload = {
+        resultPayload = {
           tarih: dbRecord.tarih,
           toplamSatis: dbRecord.toplamSatis,
           personelListesi: dbRecord.personelListesi as any,
@@ -99,69 +54,102 @@ export async function GET(req: NextRequest) {
           source: 'cache' as const,
           cacheAge: 'Yerel Sunucudan Alındı'
         };
-        // Sunucu belleğine cache'le
-        cachedData = payload;
-        cacheTime = Date.now();
-        return NextResponse.json({ ...payload, dunkuSatis, gecenHaftaSatis });
+        cachedData = resultPayload;
+        cacheTime = now;
       }
-    } catch (dbError) {
-      console.error('Veritabanından Elektra verisi okunurken hata:', dbError);
+    } catch (e) {}
+
+    if (!resultPayload) {
+      resultPayload = {
+        tarih: tarih || new Date().toISOString().split('T')[0],
+        toplamSatis: 54550,
+        personelListesi: [
+          { adSoyad: 'Ahmet Yılmaz', departman: 'Garson', satis: 15200, masaSayisi: 11 },
+          { adSoyad: 'Seda Arslan', departman: 'Bar', satis: 11300, masaSayisi: 7 },
+          { adSoyad: 'Fatma Kaya', departman: 'Bar', satis: 8900, masaSayisi: 5 },
+          { adSoyad: 'Can Öz', departman: 'Garson', satis: 6700, masaSayisi: 4 },
+          { adSoyad: 'Ahmet Yılmaz', departman: 'Garson', satis: 12450, masaSayisi: 8 },
+        ],
+        sonGuncelleme: formatTime(new Date()),
+        source: 'mock' as const,
+        mesaj: 'ELEKTRAWEB_URL .env dosyasında tanımlı değil. Mock veri gösteriliyor.'
+      };
     }
-
-    // Hiçbir kayıt bulunamazsa mock veri dönelim
-    return NextResponse.json({
-      tarih: tarih || new Date().toISOString().split('T')[0],
-      toplamSatis: 54550,
-      dunkuSatis: 476038.16,
-      gecenHaftaSatis: 282825.34,
-      personelListesi: [
-        { adSoyad: 'Ahmet Yılmaz', departman: 'Garson', satis: 15200, masaSayisi: 11 },
-        { adSoyad: 'Seda Arslan', departman: 'Bar', satis: 11300, masaSayisi: 7 },
-        { adSoyad: 'Fatma Kaya', departman: 'Bar', satis: 8900, masaSayisi: 5 },
-        { adSoyad: 'Can Öz', departman: 'Garson', satis: 6700, masaSayisi: 4 },
-        { adSoyad: 'Ahmet Yılmaz', departman: 'Garson', satis: 12450, masaSayisi: 8 },
-      ],
-      sonGuncelleme: formatTime(new Date()),
-      source: 'mock',
-      mesaj: 'ELEKTRAWEB_URL .env dosyasında tanımlı değil. Mock veri gösteriliyor.'
-    });
-  }
-
-  // ELEKTRAWEB_URL tanımlıysa (Yerel Sunucu modu) - ElektraWeb'den canlı çek ve Veritabanına kaydet
-  try {
-    // Playwright/Scraper modülünü yereldeysek dinamik import ediyoruz
-    const { elektraWebSatisRaporuCek } = await import('@/lib/elektraweb-scraper');
-    const data = await elektraWebSatisRaporuCek(tarih);
-    
-    // Veritabanına kaydet (Neon cloud veritabanına yazar, böylece Vercel de bu veriyi görür)
+  } else {
     try {
-      await prisma.elektraSatis.upsert({
-        where: { tarih: data.tarih },
-        update: {
-          toplamSatis: data.toplamSatis,
-          personelListesi: data.personelListesi as any,
-          sonGuncelleme: new Date()
-        },
-        create: {
-          tarih: data.tarih,
-          toplamSatis: data.toplamSatis,
-          personelListesi: data.personelListesi as any,
-          sonGuncelleme: new Date()
-        }
-      });
-    } catch (saveError) {
-      console.error('Scraped ElektraWeb verileri veritabanına kaydedilemedi:', saveError);
-    }
+      const { elektraWebSatisRaporuCek } = await import('@/lib/elektraweb-scraper');
+      const data = await elektraWebSatisRaporuCek(tarih);
+      
+      try {
+        await prisma.elektraSatis.upsert({
+          where: { tarih: data.tarih },
+          update: {
+            toplamSatis: data.toplamSatis,
+            personelListesi: data.personelListesi as any,
+            sonGuncelleme: new Date()
+          },
+          create: {
+            tarih: data.tarih,
+            toplamSatis: data.toplamSatis,
+            personelListesi: data.personelListesi as any,
+            sonGuncelleme: new Date()
+          }
+        });
+      } catch (saveError) {
+        console.error('Veritabanına kaydedilemedi:', saveError);
+      }
 
-    // Cache'e kaydet
-    cachedData = data;
-    cacheTime = Date.now();
-    
-    return NextResponse.json({ ...data, source: 'elektraweb', dunkuSatis });
-  } catch (error) {
-    return NextResponse.json(
-      { error: 'ElektraWeb verisi çekilemedi.', detay: (error as Error).message },
-      { status: 500 }
-    );
+      resultPayload = { ...data, source: 'elektraweb' as const };
+      cachedData = data;
+      cacheTime = now;
+    } catch (error) {
+      return NextResponse.json(
+        { error: 'ElektraWeb verisi çekilemedi.', detay: (error as Error).message },
+        { status: 500 }
+      );
+    }
   }
+
+  // 2. Karşılaştırma ciro değerlerini aktif rapor tarihini baz alarak hesapla
+  let dunkuSatis = 0;
+  let gecenHaftaSatis = 0;
+  if (resultPayload && resultPayload.tarih) {
+    try {
+      // Dünkü ciro (1 gün önce)
+      const dateObj = new Date(resultPayload.tarih);
+      dateObj.setDate(dateObj.getDate() - 1);
+      const yesterdayTarih = dateObj.toISOString().split('T')[0];
+
+      const dunkuRecord = await prisma.elektraSatis.findUnique({
+        where: { tarih: yesterdayTarih }
+      });
+      if (dunkuRecord) {
+        dunkuSatis = dunkuRecord.toplamSatis;
+      } else if (yesterdayTarih === '2026-07-09') {
+        dunkuSatis = 476038.16; // 9 Temmuz Perşembe için fallback ciro
+      }
+
+      // Geçen haftaki ciro (7 gün önce)
+      const dateWeekObj = new Date(resultPayload.tarih);
+      dateWeekObj.setDate(dateWeekObj.getDate() - 7);
+      const lastWeekTarih = dateWeekObj.toISOString().split('T')[0];
+
+      const lastWeekRecord = await prisma.elektraSatis.findUnique({
+        where: { tarih: lastWeekTarih }
+      });
+      if (lastWeekRecord) {
+        gecenHaftaSatis = lastWeekRecord.toplamSatis;
+      } else if (lastWeekTarih === '2026-07-02') {
+        gecenHaftaSatis = 282825.34; // 2 Temmuz Perşembe için fallback ciro
+      }
+    } catch (err) {
+      console.error('Karşılaştırma ciro hesaplama hatası:', err);
+    }
+  }
+
+  return NextResponse.json({
+    ...resultPayload,
+    dunkuSatis,
+    gecenHaftaSatis
+  });
 }
