@@ -504,7 +504,7 @@ export default function Home() {
                     <span className={`relative inline-flex rounded-full h-3 w-3 ${fark < 0 ? 'bg-red-500 animate-pulse' : 'bg-emerald-500'}`}></span>
                   </span>
                   <div className={`font-semibold ${fark < 0 ? 'text-red-400' : 'text-emerald-400'}`}>
-                    Dünkü ciroya göre <span className="text-white font-bold bg-slate-800 px-2 py-0.5 rounded border border-slate-700">₺{Math.abs(fark).toLocaleString('tr-TR')}</span> {fark < 0 ? 'geridesiniz' : 'öndesiniz'}
+                    Dünkü ciroya göre <span className="text-white text-base font-extrabold bg-slate-800 px-2.5 py-1 rounded border border-slate-700 mx-1">₺{Math.abs(fark).toLocaleString('tr-TR')}</span> {fark < 0 ? 'geridesiniz' : 'öndesiniz'}
                   </div>
                 </div>
               );
@@ -520,7 +520,7 @@ export default function Home() {
                     <span className={`relative inline-flex rounded-full h-3 w-3 ${farkHaftalik < 0 ? 'bg-red-500 animate-pulse' : 'bg-emerald-500'}`}></span>
                   </span>
                   <div className={`font-semibold ${farkHaftalik < 0 ? 'text-red-400' : 'text-emerald-400'}`}>
-                    Geçen hafta {gunAdi} cirosuna göre <span className="text-white font-bold bg-slate-800 px-2 py-0.5 rounded border border-slate-700">₺{Math.abs(farkHaftalik).toLocaleString('tr-TR')}</span> {farkHaftalik < 0 ? 'geridesiniz' : 'öndesiniz'}
+                    Geçen hafta {gunAdi} cirosuna göre <span className="text-white text-base font-extrabold bg-slate-800 px-2.5 py-1 rounded border border-slate-700 mx-1">₺{Math.abs(farkHaftalik).toLocaleString('tr-TR')}</span> {farkHaftalik < 0 ? 'geridesiniz' : 'öndesiniz'}
                   </div>
                 </div>
               );
