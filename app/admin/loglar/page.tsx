@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Activity, Clock, ShieldAlert, ShieldCheck, RefreshCw, Search, ArrowLeft, Filter, Smartphone, Monitor } from "lucide-react";
+import { Activity, Clock, ShieldAlert, ShieldCheck, RefreshCw, Search, ArrowLeft, Filter, Smartphone, Monitor, Trash2 } from "lucide-react";
 import Link from "next/link";
 
 interface AuditLog {
@@ -91,6 +91,22 @@ export default function AuditLogsPage() {
   useEffect(() => {
     fetchLogs();
   }, []);
+
+  const handleDeleteLog = async (id: string) => {
+    if (!confirm("Bu giriş kaydını silmek istediğinize emin misiniz?")) return;
+    try {
+      const res = await fetch(`/api/admin/audit-logs/${id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        setLogs(prev => prev.filter(log => log.id !== id));
+      } else {
+        alert("Log silinirken bir hata oluştu.");
+      }
+    } catch (err) {
+      alert("Bağlantı hatası oluştu.");
+    }
+  };
 
   const getRolBilgi = (rol: string) => {
     return ROLLER.find(r => r.value === rol) || { label: rol, color: 'text-slate-400 bg-slate-500/10 border-slate-500/20' };
@@ -182,6 +198,7 @@ export default function AuditLogsPage() {
                   <th className="px-5 py-3.5 font-medium">Rol / Yetki</th>
                   <th className="px-5 py-3.5 font-medium">IP Adresi</th>
                   <th className="px-5 py-3.5 font-medium">Cihaz \ Tarayıcı</th>
+                  <th className="px-5 py-3.5 font-medium text-right">İşlem</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-700/50">
@@ -194,11 +211,12 @@ export default function AuditLogsPage() {
                       <td className="px-5 py-4"><div className="h-5 bg-slate-700 rounded w-24" /></td>
                       <td className="px-5 py-4"><div className="h-4 bg-slate-700 rounded w-28" /></td>
                       <td className="px-5 py-4"><div className="h-4 bg-slate-700 rounded w-32" /></td>
+                      <td className="px-5 py-4"><div className="h-4 bg-slate-700 rounded w-8 ml-auto" /></td>
                     </tr>
                   ))
                 ) : filteredLogs.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-5 py-12 text-center text-slate-500">
+                    <td colSpan={7} className="px-5 py-12 text-center text-slate-500">
                       <Activity className="w-10 h-10 mx-auto mb-3 opacity-30" />
                       Arama kriterlerinize uygun sistem giriş kaydı bulunamadı.
                     </td>
@@ -242,6 +260,15 @@ export default function AuditLogsPage() {
                             )}
                             <span>{parsedUA.os} ({parsedUA.browser})</span>
                           </div>
+                        </td>
+                        <td className="px-5 py-4 text-right">
+                          <button
+                            onClick={() => handleDeleteLog(log.id)}
+                            className="text-slate-500 hover:text-red-400 p-1.5 rounded-lg hover:bg-slate-700/50 transition-all"
+                            title="Log Kaydını Sil"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
                         </td>
                       </tr>
                     );

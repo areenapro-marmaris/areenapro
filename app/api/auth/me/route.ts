@@ -33,12 +33,12 @@ export async function GET(req: NextRequest) {
     const ipAdresi = req.headers.get('x-forwarded-for') || 'Lokal';
     const tarayici = req.headers.get('user-agent') || 'Bilinmiyor';
 
-    // Son 1 saat içinde aynı kullanıcının giriş logu var mı kontrol et (mükerrer kayıtları engellemek için)
-    const birSaatOnce = new Date(Date.now() - 60 * 60 * 1000);
+    // Son 25 dakika içinde aynı kullanıcının giriş logu var mı kontrol et (mükerrer kayıtları engellemek için)
+    const yirmiBesDakikaOnce = new Date(Date.now() - 25 * 60 * 1000);
     const varolanLog = await prisma.auditLog.findFirst({
       where: {
         personelId: dbUser.id,
-        tarih: { gte: birSaatOnce }
+        tarih: { gte: yirmiBesDakikaOnce }
       }
     });
 
