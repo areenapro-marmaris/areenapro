@@ -233,4 +233,16 @@ model ChefChecklist {
   sef                  Personel @relation("SefChecklistleri", fields: [sefId], references: [id], onDelete: Cascade)
 }
 
+model AuditLog {
+  id           String   @id @default(uuid())
+  personelId   String
+  adSoyad      String
+  kullaniciAdi String
+  rol          String
+  ipAdresi     String?
+  tarayici     String?
+  tarih        DateTime @default(now())
+}
+
+
 

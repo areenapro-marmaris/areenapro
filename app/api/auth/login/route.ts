@@ -60,6 +60,27 @@ export async function POST(req: NextRequest) {
       rol: personel.rol,
     });
 
+    // Giriş Logu oluşturma mantığı
+    try {
+      const ipAdresi = req.headers.get('x-forwarded-for') || 'Lokal';
+      const tarayici = req.headers.get('user-agent') || 'Bilinmiyor';
+
+      if (prisma && dbConnected && personel.id !== 'admin-id') {
+        await prisma.auditLog.create({
+          data: {
+            personelId: personel.id,
+            adSoyad: personel.adSoyad,
+            kullaniciAdi: personel.kullaniciAdi,
+            rol: personel.rol,
+            ipAdresi,
+            tarayici,
+          }
+        });
+      }
+    } catch (logError) {
+      console.error('AuditLog yazılırken hata:', logError);
+    }
+
     const response = NextResponse.json({
       success: true,
       token,

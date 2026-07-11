@@ -671,11 +671,12 @@ export default function Home() {
             <h3 className="text-sm font-semibold text-white mb-3">Diğer Modüller</h3>
             <div className="space-y-2">
               {[
-                { name: 'Anlık Sistem', href: '/sistemler', icon: Activity, color: 'text-blue-400' },
-                { name: 'PDKS / Vardiya', href: '/pdks', icon: Clock, color: 'text-indigo-400' },
-                { name: 'Vezne / Kasa', href: '/vezne', icon: CreditCard, color: 'text-emerald-400' },
-                { name: 'Personel & Kasa', href: '/personel-kasa', icon: Users, color: 'text-purple-400' },
-              ].map((item, i) => (
+                { name: 'Anlık Sistem', href: '/sistemler', icon: Activity, color: 'text-blue-400', show: true },
+                { name: 'PDKS / Vardiya', href: '/pdks', icon: Clock, color: 'text-indigo-400', show: true },
+                { name: 'Vezne / Kasa', href: '/vezne', icon: CreditCard, color: 'text-emerald-400', show: true },
+                { name: 'Personel & Kasa', href: '/personel-kasa', icon: Users, color: 'text-purple-400', show: true },
+                { name: 'Kullanıcı Giriş Logları', href: '/admin/loglar', icon: Clock, color: 'text-pink-400', show: currentUser?.rol === 'SUPER_ADMIN' || currentUser?.rol === 'YONETICI' },
+              ].filter(item => item.show).map((item, i) => (
                 <Link key={i} href={item.href} className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-800 transition-colors group">
                   <item.icon className={`w-4 h-4 ${item.color}`} />
                   <span className="text-sm text-slate-300 group-hover:text-white transition-colors">{item.name}</span>
