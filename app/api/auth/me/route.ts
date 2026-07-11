@@ -28,5 +28,35 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Kullanıcı bulunamadı' }, { status: 404 });
   }
 
+  // Otomatik Giriş/Erişim Logu oluşturma mantığı
+  try {
+    const ipAdresi = req.headers.get('x-forwarded-for') || 'Lokal';
+    const tarayici = req.headers.get('user-agent') || 'Bilinmiyor';
+
+    // Son 1 saat içinde aynı kullanıcının giriş logu var mı kontrol et (mükerrer kayıtları engellemek için)
+    const birSaatOnce = new Date(Date.now() - 60 * 60 * 1000);
+    const varolanLog = await prisma.auditLog.findFirst({
+      where: {
+        personelId: dbUser.id,
+        tarih: { gte: birSaatOnce }
+      }
+    });
+
+    if (!varolanLog) {
+      await prisma.auditLog.create({
+        data: {
+          personelId: dbUser.id,
+          adSoyad: dbUser.adSoyad,
+          kullaniciAdi: dbUser.kullaniciAdi,
+          rol: dbUser.rol,
+          ipAdresi,
+          tarayici,
+        }
+      });
+    }
+  } catch (logError) {
+    console.error('Otomatik giriş AuditLog yazılırken hata:', logError);
+  }
+
   return NextResponse.json({ kullanici: dbUser });
 }
