@@ -19,6 +19,18 @@ function formatTime(date: Date): string {
   }
 }
 
+function getTurkeyBusinessDate(tarihInput?: string): string {
+  if (tarihInput) return tarihInput;
+  const dateInTurkey = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/Istanbul" }));
+  if (dateInTurkey.getHours() < 5) {
+    dateInTurkey.setDate(dateInTurkey.getDate() - 1);
+  }
+  const yyyy = dateInTurkey.getFullYear();
+  const mm = String(dateInTurkey.getMonth() + 1).padStart(2, '0');
+  const dd = String(dateInTurkey.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const tarih = searchParams.get('tarih') || undefined;
@@ -36,7 +48,7 @@ export async function GET(req: NextRequest) {
     };
   } else if (!process.env.ELEKTRAWEB_URL) {
     try {
-      const targetTarih = tarih || new Date().toISOString().split('T')[0];
+      const targetTarih = getTurkeyBusinessDate(tarih);
       let dbRecord = await prisma.elektraSatis.findUnique({
         where: { tarih: targetTarih }
       });
@@ -59,9 +71,10 @@ export async function GET(req: NextRequest) {
       }
     } catch (e) {}
 
+
     if (!resultPayload) {
       resultPayload = {
-        tarih: tarih || new Date().toISOString().split('T')[0],
+        tarih: getTurkeyBusinessDate(tarih),
         toplamSatis: 54550,
         personelListesi: [
           { adSoyad: 'Ahmet Yılmaz', departman: 'Garson', satis: 15200, masaSayisi: 11 },

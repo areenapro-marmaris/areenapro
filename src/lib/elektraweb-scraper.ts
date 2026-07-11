@@ -34,6 +34,17 @@ async function getBrowser(): Promise<Browser> {
   return browser;
 }
 
+function getTurkeyBusinessDate(): string {
+  const dateInTurkey = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/Istanbul" }));
+  if (dateInTurkey.getHours() < 5) {
+    dateInTurkey.setDate(dateInTurkey.getDate() - 1);
+  }
+  const yyyy = dateInTurkey.getFullYear();
+  const mm = String(dateInTurkey.getMonth() + 1).padStart(2, '0');
+  const dd = String(dateInTurkey.getDate()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
 export async function elektraWebSatisRaporuCek(tarih?: string): Promise<ElektraWebRapor> {
   const b = await getBrowser();
   const context = await b.newContext({
@@ -91,7 +102,7 @@ export async function elektraWebSatisRaporuCek(tarih?: string): Promise<ElektraW
     const toplamSatis = personelListesi.reduce((acc, p) => acc + p.satis, 0);
 
     return {
-      tarih: tarih || new Date().toISOString().split('T')[0],
+      tarih: tarih || getTurkeyBusinessDate(),
       toplamSatis,
       personelListesi,
       sonGuncelleme: new Date().toLocaleTimeString('tr-TR'),

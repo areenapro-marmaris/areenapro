@@ -177,8 +177,18 @@ async function scrapeElektraWeb() {
     personelListesi.sort((a, b) => b.satis - a.satis);
     console.log(`✅ ${personelListesi.length} garsonun verisi alındı! Toplam: ${toplamSatis} TL`);
 
+    // Türkiye saatine göre tarihi hesapla. Eğer saat sabah 05:00'ten önceyse bir önceki günü ver
+    const dateInTurkey = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/Istanbul" }));
+    if (dateInTurkey.getHours() < 5) {
+      dateInTurkey.setDate(dateInTurkey.getDate() - 1);
+    }
+    const yyyy = dateInTurkey.getFullYear();
+    const mm = String(dateInTurkey.getMonth() + 1).padStart(2, '0');
+    const dd = String(dateInTurkey.getDate()).padStart(2, '0');
+    const targetTarih = `${yyyy}-${mm}-${dd}`;
+
     return {
-      tarih: new Date().toISOString().split('T')[0],
+      tarih: targetTarih,
       toplamSatis,
       personelListesi
     };
