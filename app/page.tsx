@@ -65,10 +65,7 @@ export default function Home() {
         if (json.kullanici) {
           setCurrentUser(json.kullanici);
           if (json.kullanici.rol === 'SUPER_ADMIN') {
-            const dismissed = sessionStorage.getItem('sql_alert_dismissed');
-            if (!dismissed) {
-              setShowSqlAlert(true);
-            }
+            setShowSqlAlert(true);
           }
         }
       })
@@ -709,7 +706,6 @@ export default function Home() {
             <button
               onClick={() => {
                 setShowSqlAlert(false);
-                sessionStorage.setItem('sql_alert_dismissed', 'true');
               }}
               className="w-full py-2.5 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-950 font-bold rounded-xl transition-all shadow-lg shadow-amber-500/20"
             >
