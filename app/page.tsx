@@ -44,6 +44,7 @@ interface RaporData {
 export default function Home() {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [userLoading, setUserLoading] = useState(true);
+  const [showSqlAlert, setShowSqlAlert] = useState(false);
 
   // Management overview state
   const [data, setData] = useState<RaporData | null>(null);
@@ -63,6 +64,12 @@ export default function Home() {
       .then(json => {
         if (json.kullanici) {
           setCurrentUser(json.kullanici);
+          if (json.kullanici.rol === 'SUPER_ADMIN') {
+            const dismissed = sessionStorage.getItem('sql_alert_dismissed');
+            if (!dismissed) {
+              setShowSqlAlert(true);
+            }
+          }
         }
       })
       .catch(() => {})
@@ -684,6 +691,33 @@ export default function Home() {
               ))}
             </div>
           </div>
+      {/* SQL Servis Deneme Suresi Uyarisi Modali */}
+      {showSqlAlert && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+          <div className="bg-slate-900 border border-amber-500/30 rounded-2xl p-6 max-w-md w-full shadow-2xl shadow-amber-500/10 text-center space-y-4">
+            <div className="w-16 h-16 rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mx-auto text-amber-500 animate-pulse">
+              <AlertTriangle className="w-8 h-8" />
+            </div>
+            
+            <div className="space-y-2">
+              <h3 className="text-xl font-bold text-white tracking-tight">SQL Servis Uyarısı</h3>
+              <p className="text-slate-300 text-sm leading-relaxed">
+                SQL Servisinizin Deneme Süresi Yakında Doluyor. Lütfen Yenileme yapmayı unutmayın.
+              </p>
+            </div>
+            
+            <button
+              onClick={() => {
+                setShowSqlAlert(false);
+                sessionStorage.setItem('sql_alert_dismissed', 'true');
+              }}
+              className="w-full py-2.5 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-950 font-bold rounded-xl transition-all shadow-lg shadow-amber-500/20"
+            >
+              Tamam
+            </button>
+          </div>
+        </div>
+      )}
         </div>
       </div>
     </div>
