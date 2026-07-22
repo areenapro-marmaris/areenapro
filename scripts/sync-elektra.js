@@ -202,7 +202,16 @@ async function scrapeElektraWeb() {
 }
 
 async function runSync() {
-  console.log(`[${new Date().toLocaleTimeString('tr-TR')}] ElektraWeb senkronizasyonu başlatıldı...`);
+  const dateInTurkey = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/Istanbul" }));
+  const hour = dateInTurkey.getHours();
+  
+  // Sabah 05:00 ile öğlen 12:00 arasında ciro çekme işlemini pas geç (SQL kota tasarrufu için)
+  if (hour >= 5 && hour < 12) {
+    console.log(`[${dateInTurkey.toLocaleTimeString('tr-TR')}] İşletme kapalı saatlerinde (05:00 - 12:00). Senkronizasyon pas geçildi (Neon veritabanı kota tasarrufu).`);
+    return;
+  }
+
+  console.log(`[${dateInTurkey.toLocaleTimeString('tr-TR')}] ElektraWeb senkronizasyonu başlatıldı...`);
   
   try {
     // 1. ElektraWeb'den canlı verileri çek ve PDF raporunu oku
