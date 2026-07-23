@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { 
   FileText, Plus, X, CheckCircle, Clock, AlertTriangle, 
   ChevronRight, ShieldAlert, FileSignature, Users, User, ArrowRight,
-  Shield, Check, Ban, AlertCircle, Info, Landmark, ShieldCheck, Filter
+  Shield, Check, Ban, AlertCircle, Info, Landmark, ShieldCheck, Filter, Trash2
 } from "lucide-react";
 
 export default function DilekcelerYoneticiPage() {
@@ -174,6 +174,29 @@ export default function DilekcelerYoneticiPage() {
     }
   };
 
+  const handleTutanakDelete = async (id: string) => {
+    if (!confirm("Bu tutanağı sistemden tamamen silmek istediğinize emin misiniz?")) return;
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/tutanaklar?id=${id}`, {
+        method: "DELETE"
+      });
+      if (res.ok) {
+        setTutanaklar(prev => prev.filter(t => t.id !== id));
+        setIsDetailModalOpen(false);
+        setSelectedTutanak(null);
+        alert("Tutanak başarıyla silindi.");
+      } else {
+        const err = await res.json();
+        alert(err.error || "Tutanak silinirken hata oluştu.");
+      }
+    } catch (err) {
+      alert("Sunucu ile bağlantı kurulamadı.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (currentUser && currentUser.rol !== "SUPER_ADMIN") {
     return (
       <div className="glass-panel p-12 text-center text-red-400 font-bold border border-red-500/20">
@@ -263,7 +286,18 @@ export default function DilekcelerYoneticiPage() {
               <h3 className="text-lg font-bold flex items-center gap-2">
                 <ShieldAlert className="w-5 h-5" /> Tutanak Detayı ( {selectedTutanak.ilgili?.adSoyad} )
               </h3>
-              <button onClick={() => setIsDetailModalOpen(false)} className="text-white hover:opacity-80"><X className="w-6 h-6" /></button>
+              <div className="flex items-center gap-3">
+                {currentUser?.kullaniciAdi === "admin" && (
+                  <button
+                    onClick={() => handleTutanakDelete(selectedTutanak.id)}
+                    className="p-1.5 bg-red-600/30 hover:bg-red-600/80 rounded-lg text-white transition-all border border-red-500/20"
+                    title="Tutanağı Sil"
+                  >
+                    <Trash2 className="w-4.5 h-4.5" />
+                  </button>
+                )}
+                <button onClick={() => setIsDetailModalOpen(false)} className="text-white hover:opacity-80"><X className="w-6 h-6" /></button>
+              </div>
             </div>
             
             <div className="p-6 space-y-6 max-h-[80vh] overflow-y-auto">

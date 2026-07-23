@@ -246,3 +246,29 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ error: `Sunucu hatası: ${error.message || error}` }, { status: 500 });
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const user = await getAuthUser(req);
+    // Sadece admin kullanıcı adı olan hesaba silme yetkisi ver
+    if (!user || user.kullaniciAdi !== 'admin') {
+      return NextResponse.json({ error: 'Bu işlem için yetkiniz bulunmamaktadır. Tutanakları sadece ana yönetici (admin) silebilir.' }, { status: 403 });
+    }
+
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json({ error: 'Tutanak ID zorunludur.' }, { status: 400 });
+    }
+
+    const silinen = await prisma.tutanak.delete({
+      where: { id }
+    });
+
+    return NextResponse.json({ success: true, message: 'Tutanak başarıyla silindi.', silinen });
+  } catch (error: any) {
+    console.error('Tutanak silinirken hata:', error);
+    return NextResponse.json({ error: `Sunucu hatası: ${error.message || error}` }, { status: 500 });
+  }
+}
